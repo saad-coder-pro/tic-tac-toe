@@ -8,11 +8,48 @@
   <link rel="stylesheet" href="style.css">
   <script src="script.js"></script>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
+
   <title>Tic Tac Toe</title>
 </head>
 
 <body>
-
+  <div class="game-container">
+    <div class="cell display display--small">
+      <div class="display__title switch switched-on">
+        <div class="display__title-element">Tic</div>
+        <div class="display__title-element">Tac</div>
+        <div class="display__title-element">Toe</div>
+      </div>
+      <div class="display__symbol switch"></div>
+    </div>
+    <div class="cell display display--large">
+      <div class="switch switched-on">
+        <div class="display__message bold">Player X</div>
+        <div class="display__message">Enter your name</div>
+        <input type="text" class="display__input">
+      </div>
+      <div class="switch">
+        <button class="btn btn--again">Play again</button>
+        <button class="btn btn--restart">Restart</button>
+        <div class="display__name">Name</div>
+        <div class="display__message">It's your turn</div>
+      </div>
+    </div>
+    <div class="cell game-board__cell" data-index="0"></div>
+    <div class="cell game-board__cell" data-index="1"></div>
+    <div class="cell game-board__cell" data-index="2"></div>
+    <div class="cell game-board__cell" data-index="3"></div>
+    <div class="cell game-board__cell" data-index="4"></div>
+    <div class="cell game-board__cell" data-index="5"></div>
+    <div class="cell game-board__cell" data-index="6"></div>
+    <div class="cell game-board__cell" data-index="7"></div>
+    <div class="cell game-board__cell" data-index="8"></div>
+  </div>
 </body>
 
 </html>

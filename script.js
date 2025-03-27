@@ -1,4 +1,3 @@
-
 function createBoard() {
   const board = [
     ['', '', ''],
@@ -27,7 +26,7 @@ function createPlayer(name, symbol) {
 }
 
 const game = (() => {
-  const board = createBoard();
+  let board = createBoard();
   const players = [];
   let currentPlayer = 0;
 
@@ -41,6 +40,44 @@ const game = (() => {
     players.push(createPlayer(prompt('O – Enter your name:'), 'O'))
     board.show();
     playPrompt();
+  }
+
+  const checkForWin = () => {
+    const checkLine = (a, b, c) => a && a === b && b === c;
+    const brd = board.board;
+    let isDraw = true;
+
+    if (
+      checkLine(brd[0][0], brd[1][1], brd[2][2]) ||
+      checkLine(brd[0][2], brd[1][1], brd[2][0])
+    ) return handleEnd('win');
+
+    for (let i = 0; i <= 2; i++) {
+      if (brd[i].includes('')) isDraw = false;
+      if (
+        checkLine(brd[0][i], brd[1][i], brd[2][i]) ||
+        checkLine(brd[i][0], brd[i][1], brd[i][2])
+      ) return handleEnd('win');
+    }
+
+    if (isDraw) return handleEnd('draw');
+
+    return 0;
+  }
+
+  const handleEnd = end => {
+    board.isBlocked = true;
+    if (end === 'win') {
+      console.log(`${players[currentPlayer].name}, you've won! Congratulations!`);
+    } else if (end === 'draw') {
+      console.log(`It's a draw!`);
+    }
+    return 1;
+  }
+
+  const restartGame = () => {
+    board = createBoard();
+    initGame();
   }
 
   const play = (row, column) => {
@@ -58,32 +95,7 @@ const game = (() => {
     }
   }
 
-  const checkForWin = () => {
-    const checkLine = (a, b, c) => a && a === b && b === c;
-    const brd = board.board;
-
-    if (
-      checkLine(brd[0][0], brd[1][1], brd[2][2]) ||
-      checkLine(brd[0][2], brd[1][1], brd[2][0])
-    ) return handleWin();
-
-    for (let i = 0; i <= 2; i++) {
-      if (
-        checkLine(brd[0][i], brd[1][i], brd[2][i]) ||
-        checkLine(brd[i][0], brd[i][1], brd[i][2])
-      ) return handleWin();
-    }
-
-    return 0;
-  }
-
-  const handleWin = () => {
-    board.isBlocked = true;
-    console.log(`${players[currentPlayer].name}, you've won! Congratulations!`);
-    return 1;
-  }
-
-  initGame();
-  return { play };
+  // initGame();
+  return { restartGame, play };
 
 })();
