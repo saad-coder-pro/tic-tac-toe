@@ -16,11 +16,14 @@ html {
   font-size: 10px;
   user-select: none;
   -webkit-user-select: none;
+  min-height: 550px;
+  min-width: 450px;
 }
 
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+
 }
 
 img,
@@ -97,6 +100,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 1.2rem;
+  margin-bottom: 5vh;
 
   background: var(--color-white);
   border-radius: 2rem;

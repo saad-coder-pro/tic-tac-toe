@@ -1,6 +1,7 @@
 const elem = {
   buttonAccept: document.querySelector('.display__button.accept'),
   buttonRestart: document.querySelector('.display__button.restart'),
+  buttonAgain: document.querySelector('.display__button.again'),
   inputName: document.querySelector('.display__input'),
   playerNameSymbol: document.querySelector('.display__message.player .symbol'),
   smallStartDisplay: document.querySelector('.display.small .start'),
@@ -18,8 +19,6 @@ elem.arrStartDisplay = [elem.smallStartDisplay, elem.largeStartDisplay];
 elem.arrGameDisplay = [elem.smallGameDisplay, elem.largeGameDisplay];
 elem.arrElementsX = [elem.symbolX, elem.nameX];
 elem.arrElementsO = [elem.symbolO, elem.nameO];
-
-console.log(elem)
 
 /* ------------------------------ Constructors ------------------------------ */
 
@@ -91,6 +90,29 @@ const game = (() => {
     arr.forEach(elem => elem.classList.toggle('switched-on'));
   }
 
+  const playAgain = () => {
+    elem.arrCells.forEach(item => {
+      item.classList.remove('filled');
+    })
+
+    board = createBoard();
+
+    currentPlayer = 0;
+    switchElements([...elem.arrElementsX], [...elem.arrElementsO, ...elem.arrCells, elem.buttonAgain]);
+
+    setTimeout(() => {
+      elem.arrCells.forEach(item => {
+        item.textContent = ''
+      });
+      board.isBlocked = false;
+      board.show();
+      playPrompt();
+      switchElements(elem.arrCells, []);
+    }, 600);
+
+
+  }
+
   const initGame = async () => {
 
     elem.arrCells.forEach(item => {
@@ -118,7 +140,11 @@ const game = (() => {
     elem.arrCells.forEach(item => {
       item.textContent = ''
     });
-    switchElements([...elem.arrElementsX, ...elem.arrCells, ...elem.arrGameDisplay], elem.arrStartDisplay);
+
+    switchElements(
+      [...elem.arrElementsX, ...elem.arrCells, ...elem.arrGameDisplay],
+      [...elem.arrStartDisplay, elem.buttonAgain]
+    );
 
     board.show();
     board.isBlocked = false;
@@ -150,7 +176,7 @@ const game = (() => {
 
   const handleEnd = end => {
     board.isBlocked = true;
-    switchElements([], elem.arrCells);
+    switchElements([elem.buttonAgain], elem.arrCells);
     if (end === 'win') {
       console.log(`${players[currentPlayer].name}, you've won! Congratulations!`);
     } else if (end === 'draw') {
@@ -191,7 +217,7 @@ const game = (() => {
     initGame();
   });
 
-  return { restartGame, play };
+  return { restartGame, play, playAgain };
 
 })();
 
@@ -220,6 +246,7 @@ const handleCell = event => {
 
 elem.inputName.addEventListener('input', handleInput);
 elem.buttonRestart.addEventListener('click', game.restartGame);
+elem.buttonAgain.addEventListener('click', game.playAgain);
 elem.arrCells.forEach(item => {
   item.addEventListener('click', handleCell);
 })
