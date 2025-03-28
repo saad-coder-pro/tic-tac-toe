@@ -1,15 +1,23 @@
 const elem = {
-  acceptButton: document.querySelector('.display__button.accept'),
-  nameInput: document.querySelector('.display__input'),
+  buttonAccept: document.querySelector('.display__button.accept'),
+  buttonRestart: document.querySelector('.display__button.restart'),
+  inputName: document.querySelector('.display__input'),
   playerNameSymbol: document.querySelector('.display__message.player .symbol'),
   smallStartDisplay: document.querySelector('.display.small .start'),
   smallGameDisplay: document.querySelector('.display.small .game'),
   largeStartDisplay: document.querySelector('.display.large .start'),
   largeGameDisplay: document.querySelector('.display.large .game'),
+  symbolX: document.querySelector('.display__symbol .symbol.x'),
+  symbolO: document.querySelector('.display__symbol .symbol.o'),
+  nameX: document.querySelector('.display__name .name.x'),
+  nameO: document.querySelector('.display__name .name.o'),
+  arrCells: Array.from(document.querySelectorAll('.game-board__cell'))
 }
 
 elem.arrStartDisplay = [elem.smallStartDisplay, elem.largeStartDisplay];
 elem.arrGameDisplay = [elem.smallGameDisplay, elem.largeGameDisplay];
+elem.arrElementsX = [elem.symbolX, elem.nameX];
+elem.arrElementsO = [elem.symbolO, elem.nameO];
 
 console.log(elem)
 
@@ -22,7 +30,7 @@ function createBoard() {
     ['', '', ''],
   ];
 
-  let isBlocked = false;
+  let isBlocked = true;
 
   const update = (symbol, row, column) => {
     if (board[row][column] === '') {
@@ -38,10 +46,6 @@ function createBoard() {
   return { update, show, board, isBlocked };
 }
 
-// function createPlayer(name, symbol) {
-//   return { name, symbol };
-// }
-
 /* ---------------------------------- Game ---------------------------------- */
 
 const game = (() => {
@@ -56,47 +60,68 @@ const game = (() => {
   const createPlayer = (symbol) => {
     return new Promise(resolve => {
       elem.playerNameSymbol.textContent = symbol;
-      elem.nameInput.value = '';
-      elem.nameInput.focus();
+      elem.inputName.value = '';
 
       const handleEnterPress = event => {
         if (event.key === "Enter") handleAccept();
       }
 
       const handleAccept = () => {
-        const name = elem.nameInput.value.trim();
+        const name = elem.inputName.value.trim();
         if (name) {
-          elem.acceptButton.removeEventListener('click', handleAccept);
-          elem.nameInput.removeEventListener('keydown', handleEnterPress);
-          elem.nameInput.value = '';
+          elem.buttonAccept.removeEventListener('click', handleAccept);
+          elem.inputName.removeEventListener('keydown', handleEnterPress);
+          elem.inputName.value = '';
           handleInput();
           resolve({ name, symbol });
         }
       };
 
-      elem.acceptButton.addEventListener('click', handleAccept);
-      elem.nameInput.addEventListener('keydown', handleEnterPress);
+      elem.buttonAccept.addEventListener('click', handleAccept);
+      elem.inputName.addEventListener('keydown', handleEnterPress);
     })
   }
 
   const switchElements = (arrOn, arrOff) => {
-    arrOn.forEach(elem => elem.classList.add('switched-on'));
-    arrOff.forEach(elem => elem.classList.remove('switched-on'));
+    if (arrOn.length > 0) arrOn.forEach(elem => elem.classList.add('switched-on'));
+    if (arrOff.length > 0) arrOff.forEach(elem => elem.classList.remove('switched-on'));
+  }
+
+  const toggleElements = arr => {
+    arr.forEach(elem => elem.classList.toggle('switched-on'));
   }
 
   const initGame = async () => {
 
-    switchElements(elem.arrStartDisplay, elem.arrGameDisplay)
-    // switchElements(elem.arrGameDisplay, elem.arrStartDisplay)
+    elem.arrCells.forEach(item => {
+      item.classList.remove('filled');
+    })
+
+    switchElements([...elem.arrStartDisplay], [...elem.arrGameDisplay, elem.nameX, elem.nameO]);
+
+    const switchOnTransitionEnd = () => {
+      switchElements([elem.symbolX], [elem.symbolO]);
+    };
+
+    elem.smallStartDisplay.addEventListener("transitionend", switchOnTransitionEnd, { once: true });
 
     players.splice(0, players.length,
       await createPlayer('X'),
       await createPlayer('O')
     );
 
-    switchElements(elem.arrGameDisplay, elem.arrStartDisplay)
+    currentPlayer = 0;
+
+    elem.nameX.textContent = players[0].name;
+    elem.nameO.textContent = players[1].name;
+
+    elem.arrCells.forEach(item => {
+      item.textContent = ''
+    });
+    switchElements([...elem.arrElementsX, ...elem.arrCells, ...elem.arrGameDisplay], elem.arrStartDisplay);
 
     board.show();
+    board.isBlocked = false;
     playPrompt();
   }
 
@@ -125,6 +150,7 @@ const game = (() => {
 
   const handleEnd = end => {
     board.isBlocked = true;
+    switchElements([], elem.arrCells);
     if (end === 'win') {
       console.log(`${players[currentPlayer].name}, you've won! Congratulations!`);
     } else if (end === 'draw') {
@@ -138,12 +164,20 @@ const game = (() => {
     initGame();
   }
 
+  const fillCell = index => {
+    elem.arrCells[index].textContent = players[currentPlayer].symbol;
+    switchElements([], [elem.arrCells[index]]);
+    elem.arrCells[index].classList.add('filled');
+  }
+
   const play = (row, column) => {
     if (!board.isBlocked) {
       if (board.update(players[currentPlayer].symbol, row, column)) {
         board.show();
+        fillCell(row * 3 + column);
         if (!checkForWin()) {
           currentPlayer = ++currentPlayer % 2;
+          toggleElements([...elem.arrElementsX, ...elem.arrElementsO]);
         } else return
       } else {
         board.show();
@@ -164,16 +198,28 @@ const game = (() => {
 /* -------------------------------- Handlers -------------------------------- */
 
 const handleInput = () => {
-
-  if (elem.nameInput.value) {
-    elem.acceptButton.classList.add("switched-on");
-    elem.acceptButton.disabled = false;
+  if (elem.inputName.value) {
+    elem.buttonAccept.classList.add("switched-on");
+    elem.buttonAccept.disabled = false;
   } else {
-    elem.acceptButton.classList.remove("switched-on");
-    elem.acceptButton.disabled = true;
+    elem.buttonAccept.classList.remove("switched-on");
+    elem.buttonAccept.disabled = true;
   }
+}
+
+const handleCell = event => {
+
+  const index = Number(event.target.dataset.index)
+  const row = Math.floor(index / 3);
+  const col = index % 3;
+
+  game.play(row, col)
 }
 
 /* --------------------------------- Events --------------------------------- */
 
-elem.nameInput.addEventListener("input", handleInput);
+elem.inputName.addEventListener('input', handleInput);
+elem.buttonRestart.addEventListener('click', game.restartGame);
+elem.arrCells.forEach(item => {
+  item.addEventListener('click', handleCell);
+})

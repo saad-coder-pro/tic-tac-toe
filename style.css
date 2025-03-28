@@ -9,10 +9,13 @@
 html,
 body {
   height: 100%;
+
 }
 
 html {
   font-size: 10px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 body {
@@ -49,17 +52,18 @@ ol {
 /* -------------------------------- Variables ------------------------------- */
 
 :root {
-  --color-black: #1a1a1a;
+  --color-black: #1a1a1aff;
+  --color-black-transparent: #1a1a1a00;
   --color-white: #ffffff;
   --color-darkgray: #404040;
   --color-gray: #909090;
   --color-lightgray: #bbb;
   --color-background: #ece9e6;
   --color-border: #dddddd;
-  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-shadow: rgba(0, 0, 0, 0.12);
 
   --transitionShort: .1s;
-  --transitionLong: .5s;
+  --transitionLong: .6s;
 }
 
 /* ---------------------------- Basic components ---------------------------- */
@@ -102,7 +106,7 @@ body {
 /* --------------------------------- Display -------------------------------- */
 
 .display {
-  /* display: inline-block; */
+  position: relative;
   overflow: hidden;
 
   width: 100%;
@@ -111,22 +115,44 @@ body {
 
   background: var(--color-darkgray);
   border-radius: 1rem;
-  box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.6), inset 0 -4px 6px rgba(255, 255, 255, 0.1);
 
   font-size: 2rem;
   color: var(--color-white);
   letter-spacing: 0.1rem;
 
-  &.switch {
-    transform: translateX(10rem);
-    transition: var(--transitionLong);
+  &::after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.6), inset 0 -4px 6px rgba(255, 255, 255, 0.1);
+  }
 
-    &.switched-on {
-      transform: translateX(0rem);
-    }
+  .switch {
+    position: absolute;
+    transition: var(--transitionLong);
+    width: 100%;
+    padding: inherit;
   }
 
   &.small {
+
+    .switch {
+
+      &.start {
+        left: -10rem;
+      }
+
+      &.game {
+        left: 10rem;
+      }
+
+      &.switched-on {
+        left: 0;
+      }
+    }
 
     .display__title {
       margin-top: -.35rem;
@@ -145,17 +171,19 @@ body {
 
     .display__symbol {
       display: flex;
+      position: absolute;
       justify-content: center;
       align-items: center;
-      position: relative;
       font-family: 'Space Grotesk';
+      overflow: hidden;
       width: 100%;
       height: 100%;
-      font-size: 9rem;
-      font-weight: 100;
+      font-size: 8.5rem;
+      margin-left: .2rem;
+      font-weight: 300;
 
       .symbol {
-        --displacement: 11rem;
+        --displacement: 8rem;
 
         position: absolute;
         transition: var(--transitionLong);
@@ -180,23 +208,22 @@ body {
     grid-column: span 2;
 
     .switch {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: space-between;
 
-      /* display: none; */
       &.start {
         margin-top: -.5rem;
+        left: 20rem;
       }
 
       &.game {
         margin-top: -.3rem;
+        left: -20rem;
       }
 
       &.switched-on {
-        display: flex;
-        width: 100%;
-        flex-basis: 50%;
-        flex-grow: 1;
-        flex-flow: row wrap;
-        justify-content: space-between;
+        left: 0;
       }
     }
 
@@ -213,8 +240,8 @@ body {
     }
 
     .display__button {
-      /* display: none; */
-      transition: all var(--transitionShort), transform var(--transitionLong), opacity var(--transitionLong);
+      z-index: 1;
+      transition: all var(--transitionShort), transform .45s, opacity .45s;
 
       background: none;
       border: none;
@@ -225,7 +252,8 @@ body {
       text-decoration: none;
       text-align: right;
 
-      &.accept {
+      &.accept,
+      &.again {
         opacity: 0;
         transform: translateX(9rem);
       }
@@ -249,6 +277,7 @@ body {
       width: 100%;
       padding: .1rem .4rem;
       margin-top: -.2rem;
+      z-index: 99;
 
       background: none;
       border: none;
@@ -268,9 +297,8 @@ body {
       line-height: 1.2;
       width: 100%;
       font-size: 2rem;
-      /* height: 1em; */
       margin-top: .2rem;
-      /* margin-bottom: .8rem; */
+      letter-spacing: .1rem;
 
       .name {
         position: relative;
@@ -278,21 +306,19 @@ body {
         &::before {
           content: '';
           display: block;
-          height: .7em;
-          width: 3rem;
+          height: .5em;
+          width: 2rem;
           background: white;
           position: absolute;
-          top: .4em;
-          left: -7rem;
-          /* position: absolute; */
+          top: .5em;
+          left: -5rem;
+          transition: var(--transitionLong);
         }
 
         &.switched-on::before {
-          left: -4rem;
+          left: -3rem;
         }
       }
-
-      /* .name::before {} */
     }
 
   }
@@ -301,19 +327,25 @@ body {
 /* ------------------------------- Game board ------------------------------- */
 
 .game-board__cell {
-  transition: var(--transitionShort) ease;
+  transition: all var(--transitionShort), color .35s;
 
   background: var(--color-white);
   border: 0.15rem solid var(--color-border);
   box-shadow: 0 2px 4px var(--color-shadow);
 
-  font-size: 2.4rem;
-  font-weight: bold;
+  font-size: 5.5rem;
+  font-family: 'Space Grotesk';
+  font-weight: 300;
+  color: var(--color-black-transparent);
 
-  &switched-on:hover {
+  &.switched-on:hover {
     background-color: #f5f5f5;
     transform: scale(1.05);
     cursor: pointer;
+  }
+
+  &.filled {
+    color: var(--color-black);
   }
 }
 
@@ -321,12 +353,4 @@ body {
 
 .bold {
   font-weight: bolder;
-}
-
-.switch {
-  display: none;
-}
-
-.switched-on {
-  display: initial;
 }
