@@ -1,3 +1,20 @@
+const elem = {
+  acceptButton: document.querySelector('.display__button.accept'),
+  nameInput: document.querySelector('.display__input'),
+  playerNameSymbol: document.querySelector('.display__message.player .symbol'),
+  smallStartDisplay: document.querySelector('.display.small .start'),
+  smallGameDisplay: document.querySelector('.display.small .game'),
+  largeStartDisplay: document.querySelector('.display.large .start'),
+  largeGameDisplay: document.querySelector('.display.large .game'),
+}
+
+elem.arrStartDisplay = [elem.smallStartDisplay, elem.largeStartDisplay];
+elem.arrGameDisplay = [elem.smallGameDisplay, elem.largeGameDisplay];
+
+console.log(elem)
+
+/* ------------------------------ Constructors ------------------------------ */
+
 function createBoard() {
   const board = [
     ['', '', ''],
@@ -21,9 +38,11 @@ function createBoard() {
   return { update, show, board, isBlocked };
 }
 
-function createPlayer(name, symbol) {
-  return { name, symbol };
-}
+// function createPlayer(name, symbol) {
+//   return { name, symbol };
+// }
+
+/* ---------------------------------- Game ---------------------------------- */
 
 const game = (() => {
   let board = createBoard();
@@ -34,10 +53,49 @@ const game = (() => {
     console.log(`${players[currentPlayer].name} to play.`);
   }
 
-  const initGame = () => {
-    players.splice(0);
-    players.push(createPlayer(prompt('X – Enter your name:'), 'X'))
-    players.push(createPlayer(prompt('O – Enter your name:'), 'O'))
+  const createPlayer = (symbol) => {
+    return new Promise(resolve => {
+      elem.playerNameSymbol.textContent = symbol;
+      elem.nameInput.value = '';
+      elem.nameInput.focus();
+
+      const handleEnterPress = event => {
+        if (event.key === "Enter") handleAccept();
+      }
+
+      const handleAccept = () => {
+        const name = elem.nameInput.value.trim();
+        if (name) {
+          elem.acceptButton.removeEventListener('click', handleAccept);
+          elem.nameInput.removeEventListener('keydown', handleEnterPress);
+          elem.nameInput.value = '';
+          handleInput();
+          resolve({ name, symbol });
+        }
+      };
+
+      elem.acceptButton.addEventListener('click', handleAccept);
+      elem.nameInput.addEventListener('keydown', handleEnterPress);
+    })
+  }
+
+  const switchElements = (arrOn, arrOff) => {
+    arrOn.forEach(elem => elem.classList.add('switched-on'));
+    arrOff.forEach(elem => elem.classList.remove('switched-on'));
+  }
+
+  const initGame = async () => {
+
+    switchElements(elem.arrStartDisplay, elem.arrGameDisplay)
+    // switchElements(elem.arrGameDisplay, elem.arrStartDisplay)
+
+    players.splice(0, players.length,
+      await createPlayer('X'),
+      await createPlayer('O')
+    );
+
+    switchElements(elem.arrGameDisplay, elem.arrStartDisplay)
+
     board.show();
     playPrompt();
   }
@@ -95,7 +153,27 @@ const game = (() => {
     }
   }
 
-  // initGame();
+  document.addEventListener("DOMContentLoaded", () => {
+    initGame();
+  });
+
   return { restartGame, play };
 
 })();
+
+/* -------------------------------- Handlers -------------------------------- */
+
+const handleInput = () => {
+
+  if (elem.nameInput.value) {
+    elem.acceptButton.classList.add("switched-on");
+    elem.acceptButton.disabled = false;
+  } else {
+    elem.acceptButton.classList.remove("switched-on");
+    elem.acceptButton.disabled = true;
+  }
+}
+
+/* --------------------------------- Events --------------------------------- */
+
+elem.nameInput.addEventListener("input", handleInput);

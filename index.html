@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,27 +19,41 @@
 
 <body>
   <div class="game-container">
-    <div class="cell display display--small">
-      <div class="display__title switch switched-on">
+    <div class="cell display small">
+
+      <div class="display__title switch start">
         <div class="display__title-element">Tic</div>
         <div class="display__title-element">Tac</div>
         <div class="display__title-element">Toe</div>
       </div>
-      <div class="display__symbol switch"></div>
+
+      <div class="display__symbol game switch">
+        <div class="symbol x">X</div>
+        <div class="symbol o">O</div>
+      </div>
+
     </div>
-    <div class="cell display display--large">
-      <div class="switch switched-on">
-        <div class="display__message bold">Player X</div>
+    <div class="cell display large">
+
+      <div class="switch start">
+        <div class="display__message player bold">Player <span class="symbol"></span></div>
+        <button class="display__button accept">Accept</button>
         <div class="display__message">Enter your name</div>
-        <input type="text" class="display__input">
+        <input type="text" class="display__input" maxlength="16">
       </div>
-      <div class="switch">
-        <button class="btn btn--again">Play again</button>
-        <button class="btn btn--restart">Restart</button>
-        <div class="display__name">Name</div>
-        <div class="display__message">It's your turn</div>
+
+      <div class="switch game">
+        <button class="display__button restart switched-on">Restart</button>
+        <button class="display__button again">Play again</button>
+        <div class="display__name">
+          <div class="name x">Player X</div>
+          <div class="name o">Player O</div>
+        </div>
+        <!-- <div class="display__message">It's your turn</div> -->
       </div>
+
     </div>
+
     <div class="cell game-board__cell" data-index="0"></div>
     <div class="cell game-board__cell" data-index="1"></div>
     <div class="cell game-board__cell" data-index="2"></div>
@@ -49,6 +63,7 @@
     <div class="cell game-board__cell" data-index="6"></div>
     <div class="cell game-board__cell" data-index="7"></div>
     <div class="cell game-board__cell" data-index="8"></div>
+
   </div>
 </body>
 
