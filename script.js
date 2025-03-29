@@ -1,3 +1,5 @@
+/* -------------------------------- Elements -------------------------------- */
+
 const elem = {
   buttonAccept: document.querySelector('.display__button.accept'),
   buttonRestart: document.querySelector('.display__button.restart'),
@@ -8,6 +10,8 @@ const elem = {
   smallGameDisplay: document.querySelector('.display.small .game'),
   largeStartDisplay: document.querySelector('.display.large .start'),
   largeGameDisplay: document.querySelector('.display.large .game'),
+  displayName: document.querySelector('.display__name'),
+  displayEnd: document.querySelector('.display__end'),
   symbolX: document.querySelector('.display__symbol .symbol.x'),
   symbolO: document.querySelector('.display__symbol .symbol.o'),
   nameX: document.querySelector('.display__name .name.x'),
@@ -90,6 +94,11 @@ const game = (() => {
     arr.forEach(elem => elem.classList.toggle('switched-on'));
   }
 
+  const showHideElements = (arrShow, arrHide) => {
+    if (arrShow.length > 0) arrShow.forEach(elem => elem.classList.remove('hidden'));
+    if (arrHide.length > 0) arrHide.forEach(elem => elem.classList.add('hidden'));
+  }
+
   const playAgain = () => {
     elem.arrCells.forEach(item => {
       item.classList.remove('filled');
@@ -98,7 +107,12 @@ const game = (() => {
     board = createBoard();
 
     currentPlayer = 0;
-    switchElements([...elem.arrElementsX], [...elem.arrElementsO, ...elem.arrCells, elem.buttonAgain]);
+    switchElements(
+      [...elem.arrElementsX, elem.displayName],
+      [...elem.arrElementsO, ...elem.arrCells, elem.buttonAgain, elem.displayEnd]
+    );
+
+    elem.buttonAgain.disabled = true;
 
     setTimeout(() => {
       elem.arrCells.forEach(item => {
@@ -132,6 +146,8 @@ const game = (() => {
       await createPlayer('O')
     );
 
+    showHideElements([], [elem.displayEnd]);
+
     currentPlayer = 0;
 
     elem.nameX.textContent = players[0].name;
@@ -142,10 +158,16 @@ const game = (() => {
     });
 
     switchElements(
-      [...elem.arrElementsX, ...elem.arrCells, ...elem.arrGameDisplay],
-      [...elem.arrStartDisplay, elem.buttonAgain]
+      [...elem.arrElementsX, ...elem.arrCells, ...elem.arrGameDisplay, elem.displayName],
+      [...elem.arrStartDisplay, elem.buttonAgain, elem.displayEnd]
     );
 
+    setTimeout(() => {
+      showHideElements([elem.displayEnd], []);
+    }, 1000);
+
+    elem.buttonRestart.disabled = false;
+    elem.buttonAgain.disabled = false;
     board.show();
     board.isBlocked = false;
     playPrompt();
@@ -176,16 +198,22 @@ const game = (() => {
 
   const handleEnd = end => {
     board.isBlocked = true;
-    switchElements([elem.buttonAgain], elem.arrCells);
+    switchElements([elem.buttonAgain, elem.displayEnd], [...elem.arrCells, elem.displayName]);
+    elem.buttonAgain.disabled = false;
     if (end === 'win') {
       console.log(`${players[currentPlayer].name}, you've won! Congratulations!`);
+      elem.displayEnd.textContent = `${players[currentPlayer].name} won!\nCongratulations!`
     } else if (end === 'draw') {
       console.log(`It's a draw!`);
+      elem.displayEnd.textContent = `It's a draw!`;
     }
     return 1;
   }
 
   const restartGame = () => {
+    elem.buttonRestart.disabled = true;
+    elem.buttonAgain.disabled = true;
+    if (!elem.displayEnd.classList.contains('switched-on')) showHideElements([], [elem.displayEnd]);
     board = createBoard();
     initGame();
   }

@@ -232,6 +232,9 @@ body {
       &.game {
         margin-top: -.3rem;
         left: -20rem;
+        height: 100%;
+        padding-top: 1.5rem;
+        align-items: flex-start;
       }
 
       &.switched-on {
@@ -305,11 +308,14 @@ body {
     }
 
     .display__name {
-      position: relative;
+      transform: translateX(-20rem);
+
+      position: absolute;
       line-height: 1.2;
       width: 100%;
       font-size: 2rem;
-      margin-top: .2rem;
+      /* margin-top: .2rem; */
+      bottom: 1.5rem;
       letter-spacing: .1rem;
 
       .name {
@@ -330,6 +336,23 @@ body {
         &.switched-on::before {
           left: -3rem;
         }
+      }
+    }
+
+    .display__end {
+      font-size: .75em;
+      line-height: 1.4;
+      top: 4rem;
+      transform: translateX(20rem);
+    }
+
+    .display__name,
+    .display__end {
+      position: absolute;
+      transition: var(--transitionLong);
+
+      &.switched-on {
+        transform: translateX(0rem);
       }
     }
   }
@@ -370,39 +393,44 @@ body {
   font-size: 1.8rem;
   flex: 0;
   color: rgba(0, 0, 0, .3);
-  margin: 1rem 0;
+  margin: 1.2rem 0;
+
+  .footer__wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0 1rem;
+  }
+
+  .footer__name {
+    transition: .1s;
+
+    &:hover {
+      text-decoration: underline;
+      color: rgba(0, 0, 0, .5);
+    }
+  }
+
+  .footer__link {
+    margin-top: .1rem;
+    font-size: 2.1rem;
+    transition: .25s;
+    transform: scale(1);
+
+    &:hover {
+      margin-left: 0;
+      transform: scale(1.15);
+      color: rgba(0, 0, 0, .5);
+    }
+  }
 }
 
-.footer__wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0 1rem;
-}
-
-.footer__name {
-  transition: .1s;
-}
-
-.footer__name:hover {
-  text-decoration: underline;
-  color: rgba(0, 0, 0, .4);
-}
-
-.footer__link {
-  margin-top: .1rem;
-  font-size: 2.1rem;
-  transition: .25s;
-  transform: scale(1);
-}
-
-.footer__link:hover {
-  margin-left: 0;
-  transform: scale(1.15);
-  color: rgba(0, 0, 0, .4);
-}
 
 /* -------------------------------- Modifiers ------------------------------- */
 
 .bold {
   font-weight: bolder;
+}
+
+.hidden {
+  display: none;
 }
