@@ -16,8 +16,8 @@ html {
   font-size: 10px;
   user-select: none;
   -webkit-user-select: none;
-  min-height: 550px;
-  min-width: 450px;
+  min-height: 600px;
+  min-width: 500px;
 }
 
 body {
@@ -83,6 +83,14 @@ body {
   font-family: 'Space Mono', monospace;
 }
 
+.wrapper {
+  flex: 1;
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: center;
+  align-items: center;
+}
+
 .cell {
   display: flex;
   height: 10rem;
@@ -100,7 +108,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 1.2rem;
-  margin-bottom: 5vh;
+  /* margin-bottom: 5vh; */
 
   background: var(--color-white);
   border-radius: 2rem;
@@ -324,9 +332,9 @@ body {
         }
       }
     }
-
   }
 }
+
 
 /* ------------------------------- Game board ------------------------------- */
 
@@ -351,6 +359,46 @@ body {
   &.filled {
     color: var(--color-black);
   }
+}
+
+/* --------------------------------- Footer --------------------------------- */
+
+.footer {
+  font-family: 'Space Grotesk';
+  display: flex;
+  align-items: flex-end;
+  font-size: 1.8rem;
+  flex: 0;
+  color: rgba(0, 0, 0, .3);
+  margin: 1rem 0;
+}
+
+.footer__wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0 1rem;
+}
+
+.footer__name {
+  transition: .1s;
+}
+
+.footer__name:hover {
+  text-decoration: underline;
+  color: rgba(0, 0, 0, .4);
+}
+
+.footer__link {
+  margin-top: .1rem;
+  font-size: 2.1rem;
+  transition: .25s;
+  transform: scale(1);
+}
+
+.footer__link:hover {
+  margin-left: 0;
+  transform: scale(1.15);
+  color: rgba(0, 0, 0, .4);
 }
 
 /* -------------------------------- Modifiers ------------------------------- */

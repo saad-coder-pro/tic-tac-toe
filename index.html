@@ -13,58 +13,63 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
     rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <title>Tic Tac Toe</title>
 </head>
 
 <body>
-  <div class="game-container">
-    <div class="cell display small">
-
-      <div class="display__title switch start">
-        <div class="display__title-element">Tic</div>
-        <div class="display__title-element">Tac</div>
-        <div class="display__title-element">Toe</div>
-      </div>
-
-      <div class="display__symbol game switch">
-        <div class="symbol x">X</div>
-        <div class="symbol o">O</div>
-      </div>
-
-    </div>
-    <div class="cell display large">
-
-      <div class="switch start">
-        <div class="display__message player bold">Player <span class="symbol"></span></div>
-        <button class="display__button accept">Accept</button>
-        <div class="display__message">Enter your name</div>
-        <input type="text" class="display__input" maxlength="16">
-      </div>
-
-      <div class="switch game">
-        <button class="display__button restart switched-on">Restart</button>
-        <button class="display__button again">Play again</button>
-        <div class="display__name">
-          <div class="name x"></div>
-          <div class="name o"></div>
+  <div class="wrapper">
+    <div class="game-container">
+      <div class="cell display small">
+        <div class="display__title switch start">
+          <div class="display__title-element">Tic</div>
+          <div class="display__title-element">Tac</div>
+          <div class="display__title-element">Toe</div>
         </div>
-        <!-- <div class="display__message">It's your turn</div> -->
+        <div class="display__symbol game switch">
+          <div class="symbol x">X</div>
+          <div class="symbol o">O</div>
+        </div>
       </div>
-
+      <div class="cell display large">
+        <div class="switch start">
+          <div class="display__message player bold">Player <span class="symbol"></span></div>
+          <button class="display__button accept">Accept</button>
+          <div class="display__message">Enter your name</div>
+          <input type="text" class="display__input" maxlength="16">
+        </div>
+        <div class="switch game">
+          <button class="display__button restart switched-on">Restart</button>
+          <button class="display__button again">Play again</button>
+          <div class="display__name">
+            <div class="name x"></div>
+            <div class="name o"></div>
+          </div>
+          <!-- <div class="display__message">It's your turn</div> -->
+        </div>
+      </div>
+      <div class="cell game-board__cell" data-index="0"></div>
+      <div class="cell game-board__cell" data-index="1"></div>
+      <div class="cell game-board__cell" data-index="2"></div>
+      <div class="cell game-board__cell" data-index="3"></div>
+      <div class="cell game-board__cell" data-index="4"></div>
+      <div class="cell game-board__cell" data-index="5"></div>
+      <div class="cell game-board__cell" data-index="6"></div>
+      <div class="cell game-board__cell" data-index="7"></div>
+      <div class="cell game-board__cell" data-index="8"></div>
     </div>
-
-    <div class="cell game-board__cell" data-index="0"></div>
-    <div class="cell game-board__cell" data-index="1"></div>
-    <div class="cell game-board__cell" data-index="2"></div>
-    <div class="cell game-board__cell" data-index="3"></div>
-    <div class="cell game-board__cell" data-index="4"></div>
-    <div class="cell game-board__cell" data-index="5"></div>
-    <div class="cell game-board__cell" data-index="6"></div>
-    <div class="cell game-board__cell" data-index="7"></div>
-    <div class="cell game-board__cell" data-index="8"></div>
-
   </div>
+  <footer class="footer">
+    <div class="footer__wrapper">
+      <p>Designed and built by <a class="footer__name" href="https://github.com/pascard20">Łukasz Pasternak</a>
+      </p>
+      <a class="footer__link" href="https://github.com/pascard20/odin-08-tic-tac-toe"><i
+          class="fa-brands fa-github"></i></a>
+    </div>
+  </footer>
 </body>
 
 </html>
