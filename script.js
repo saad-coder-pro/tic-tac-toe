@@ -47,16 +47,17 @@ const game = (() => {
     return { update, board, isBlocked };
   }
 
-  /* ----------------------------- Game variables ----------------------------- */
+  /* ------------------------ Game variables/constants ------------------------ */
 
   let board = createBoard();
-  const players = [];
+  const PLAYERS = [];
   let currentPlayer = 0;
 
   /* ---------------------------- Helper functions ---------------------------- */
+
   const switchElements = (arrOn, arrOff) => {
-    if (arrOn.length > 0) arrOn.forEach(elem => elem.classList.add('switched-on'));
-    if (arrOff.length > 0) arrOff.forEach(elem => elem.classList.remove('switched-on'));
+    arrOn.forEach(elem => elem.classList.add('switched-on'));
+    arrOff.forEach(elem => elem.classList.remove('switched-on'));
   }
 
   const toggleElements = arr => {
@@ -64,14 +65,22 @@ const game = (() => {
   }
 
   const showHideElements = (arrShow, arrHide) => {
-    if (arrShow.length > 0) arrShow.forEach(elem => elem.classList.remove('hidden'));
-    if (arrHide.length > 0) arrHide.forEach(elem => elem.classList.add('hidden'));
+    arrShow.forEach(elem => elem.classList.remove('hidden'));
+    arrHide.forEach(elem => elem.classList.add('hidden'));
   }
 
   const fillCell = index => {
-    elem.arrCells[index].textContent = players[currentPlayer].symbol;
+    elem.arrCells[index].textContent = PLAYERS[currentPlayer].symbol;
     switchElements([], [elem.arrCells[index]]);
     elem.arrCells[index].classList.add('filled');
+  }
+
+  const unfillCell = type => {
+    if (type !== 'class' && type !== 'text') return;
+
+    elem.arrCells.forEach(item => {
+      type === 'class' ? item.classList.remove('filled') : item.textContent = '';
+    });
   }
 
   /* ------------------------------- Game logic ------------------------------- */
@@ -80,6 +89,7 @@ const game = (() => {
     return new Promise(resolve => {
       elem.playerNameSymbol.textContent = symbol;
       elem.inputName.value = '';
+      setTimeout(() => elem.inputName.focus(), 100);
 
       const handleEnterPress = event => {
         if (event.key === "Enter") handleAccept();
@@ -102,19 +112,15 @@ const game = (() => {
   }
 
   const initGame = async () => {
-    elem.arrCells.forEach(item => {
-      item.classList.remove('filled');
-    })
 
+    unfillCell('class');
     switchElements([...elem.arrStartDisplay], [...elem.arrGameDisplay, elem.nameX, elem.nameO]);
 
-    const switchOnTransitionEnd = () => {
+    elem.smallStartDisplay.addEventListener("transitionend", () => {
       switchElements([elem.symbolX], [elem.symbolO]);
-    };
+    }, { once: true });
 
-    elem.smallStartDisplay.addEventListener("transitionend", switchOnTransitionEnd, { once: true });
-
-    players.splice(0, players.length,
+    PLAYERS.splice(0, PLAYERS.length,
       await createPlayer('X'),
       await createPlayer('O')
     );
@@ -122,14 +128,10 @@ const game = (() => {
     showHideElements([], [elem.displayEnd]);
 
     currentPlayer = 0;
+    elem.nameX.textContent = PLAYERS[0].name;
+    elem.nameO.textContent = PLAYERS[1].name;
 
-    elem.nameX.textContent = players[0].name;
-    elem.nameO.textContent = players[1].name;
-
-    elem.arrCells.forEach(item => {
-      item.textContent = ''
-    });
-
+    unfillCell('text');
     switchElements(
       [...elem.arrElementsX, ...elem.arrCells, ...elem.arrGameDisplay, elem.displayName],
       [...elem.arrStartDisplay, elem.buttonAgain, elem.displayEnd]
@@ -172,7 +174,7 @@ const game = (() => {
     switchElements([elem.buttonAgain, elem.displayEnd], [...elem.arrCells, elem.displayName]);
     elem.buttonAgain.disabled = false;
     if (end === 'win') {
-      elem.displayEnd.textContent = `${players[currentPlayer].name} won!\nCongratulations!`
+      elem.displayEnd.textContent = `${PLAYERS[currentPlayer].name} won!\nCongratulations!`
     } else if (end === 'draw') {
       elem.displayEnd.textContent = `It's a draw!`;
     }
@@ -181,7 +183,7 @@ const game = (() => {
 
   const play = (row, column) => {
     if (!board.isBlocked) {
-      if (board.update(players[currentPlayer].symbol, row, column)) {
+      if (board.update(PLAYERS[currentPlayer].symbol, row, column)) {
         fillCell(row * 3 + column);
         if (!checkForWin()) {
           currentPlayer = ++currentPlayer % 2;
@@ -194,13 +196,9 @@ const game = (() => {
   /* -------------------------------- Handlers -------------------------------- */
 
   const handleInput = () => {
-    if (elem.inputName.value) {
-      elem.buttonAccept.classList.add("switched-on");
-      elem.buttonAccept.disabled = false;
-    } else {
-      elem.buttonAccept.classList.remove("switched-on");
-      elem.buttonAccept.disabled = true;
-    }
+    const enabled = Boolean(elem.inputName.value.trim());
+    elem.buttonAccept.classList.toggle('switched-on', enabled);
+    elem.buttonAccept.disabled = !enabled;
   }
 
   const restartGame = () => {
@@ -212,24 +210,19 @@ const game = (() => {
   }
 
   const playAgain = () => {
-    elem.arrCells.forEach(item => {
-      item.classList.remove('filled');
-    })
 
+    unfillCell('class')
     board = createBoard();
-
     currentPlayer = 0;
+
     switchElements(
       [...elem.arrElementsX, elem.displayName],
       [...elem.arrElementsO, ...elem.arrCells, elem.buttonAgain, elem.displayEnd]
     );
-
     elem.buttonAgain.disabled = true;
 
     setTimeout(() => {
-      elem.arrCells.forEach(item => {
-        item.textContent = ''
-      });
+      unfillCell('text');
       board.isBlocked = false;
       switchElements(elem.arrCells, []);
     }, 600);

@@ -86,7 +86,6 @@ body {
 .wrapper {
   flex: 1;
   display: flex;
-  /* flex-direction: column; */
   justify-content: center;
   align-items: center;
 }
@@ -108,7 +107,6 @@ body {
   justify-content: center;
   align-items: center;
   gap: 1.2rem;
-  /* margin-bottom: 5vh; */
 
   background: var(--color-white);
   border-radius: 2rem;
@@ -314,7 +312,6 @@ body {
       line-height: 1.2;
       width: 100%;
       font-size: 2rem;
-      /* margin-top: .2rem; */
       bottom: 1.5rem;
       letter-spacing: .1rem;
 
