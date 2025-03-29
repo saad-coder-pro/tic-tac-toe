@@ -1,64 +1,80 @@
-/* -------------------------------- Elements -------------------------------- */
-
-const elem = {
-  buttonAccept: document.querySelector('.display__button.accept'),
-  buttonRestart: document.querySelector('.display__button.restart'),
-  buttonAgain: document.querySelector('.display__button.again'),
-  inputName: document.querySelector('.display__input'),
-  playerNameSymbol: document.querySelector('.display__message.player .symbol'),
-  smallStartDisplay: document.querySelector('.display.small .start'),
-  smallGameDisplay: document.querySelector('.display.small .game'),
-  largeStartDisplay: document.querySelector('.display.large .start'),
-  largeGameDisplay: document.querySelector('.display.large .game'),
-  displayName: document.querySelector('.display__name'),
-  displayEnd: document.querySelector('.display__end'),
-  symbolX: document.querySelector('.display__symbol .symbol.x'),
-  symbolO: document.querySelector('.display__symbol .symbol.o'),
-  nameX: document.querySelector('.display__name .name.x'),
-  nameO: document.querySelector('.display__name .name.o'),
-  arrCells: Array.from(document.querySelectorAll('.game-board__cell'))
-}
-
-elem.arrStartDisplay = [elem.smallStartDisplay, elem.largeStartDisplay];
-elem.arrGameDisplay = [elem.smallGameDisplay, elem.largeGameDisplay];
-elem.arrElementsX = [elem.symbolX, elem.nameX];
-elem.arrElementsO = [elem.symbolO, elem.nameO];
-
-/* ------------------------------ Constructors ------------------------------ */
-
-function createBoard() {
-  const board = [
-    ['', '', ''],
-    ['', '', ''],
-    ['', '', ''],
-  ];
-
-  let isBlocked = true;
-
-  const update = (symbol, row, column) => {
-    if (board[row][column] === '') {
-      board[row][column] = symbol;
-      return 1;
-    } else return 0;
-  }
-
-  const show = () => {
-    console.table(board);
-  }
-
-  return { update, show, board, isBlocked };
-}
-
-/* ---------------------------------- Game ---------------------------------- */
-
 const game = (() => {
+
+  /* -------------------------------- Elements -------------------------------- */
+
+  const elem = {
+    buttonAccept: document.querySelector('.display__button.accept'),
+    buttonRestart: document.querySelector('.display__button.restart'),
+    buttonAgain: document.querySelector('.display__button.again'),
+    inputName: document.querySelector('.display__input'),
+    playerNameSymbol: document.querySelector('.display__message.player .symbol'),
+    smallStartDisplay: document.querySelector('.display.small .start'),
+    smallGameDisplay: document.querySelector('.display.small .game'),
+    largeStartDisplay: document.querySelector('.display.large .start'),
+    largeGameDisplay: document.querySelector('.display.large .game'),
+    displayName: document.querySelector('.display__name'),
+    displayEnd: document.querySelector('.display__end'),
+    symbolX: document.querySelector('.display__symbol .symbol.x'),
+    symbolO: document.querySelector('.display__symbol .symbol.o'),
+    nameX: document.querySelector('.display__name .name.x'),
+    nameO: document.querySelector('.display__name .name.o'),
+    arrCells: Array.from(document.querySelectorAll('.game-board__cell'))
+  }
+
+  elem.arrStartDisplay = [elem.smallStartDisplay, elem.largeStartDisplay];
+  elem.arrGameDisplay = [elem.smallGameDisplay, elem.largeGameDisplay];
+  elem.arrElementsX = [elem.symbolX, elem.nameX];
+  elem.arrElementsO = [elem.symbolO, elem.nameO];
+
+  /* ---------------------------- Board constructor --------------------------- */
+
+  function createBoard() {
+    const board = [
+      ['', '', ''],
+      ['', '', ''],
+      ['', '', ''],
+    ];
+
+    let isBlocked = true;
+
+    const update = (symbol, row, column) => {
+      if (board[row][column] === '') {
+        board[row][column] = symbol;
+        return 1;
+      } else return 0;
+    }
+
+    return { update, board, isBlocked };
+  }
+
+  /* ----------------------------- Game variables ----------------------------- */
+
   let board = createBoard();
   const players = [];
   let currentPlayer = 0;
 
-  const playPrompt = () => {
-    console.log(`${players[currentPlayer].name} to play.`);
+  /* ---------------------------- Helper functions ---------------------------- */
+  const switchElements = (arrOn, arrOff) => {
+    if (arrOn.length > 0) arrOn.forEach(elem => elem.classList.add('switched-on'));
+    if (arrOff.length > 0) arrOff.forEach(elem => elem.classList.remove('switched-on'));
   }
+
+  const toggleElements = arr => {
+    arr.forEach(elem => elem.classList.toggle('switched-on'));
+  }
+
+  const showHideElements = (arrShow, arrHide) => {
+    if (arrShow.length > 0) arrShow.forEach(elem => elem.classList.remove('hidden'));
+    if (arrHide.length > 0) arrHide.forEach(elem => elem.classList.add('hidden'));
+  }
+
+  const fillCell = index => {
+    elem.arrCells[index].textContent = players[currentPlayer].symbol;
+    switchElements([], [elem.arrCells[index]]);
+    elem.arrCells[index].classList.add('filled');
+  }
+
+  /* ------------------------------- Game logic ------------------------------- */
 
   const createPlayer = (symbol) => {
     return new Promise(resolve => {
@@ -85,50 +101,7 @@ const game = (() => {
     })
   }
 
-  const switchElements = (arrOn, arrOff) => {
-    if (arrOn.length > 0) arrOn.forEach(elem => elem.classList.add('switched-on'));
-    if (arrOff.length > 0) arrOff.forEach(elem => elem.classList.remove('switched-on'));
-  }
-
-  const toggleElements = arr => {
-    arr.forEach(elem => elem.classList.toggle('switched-on'));
-  }
-
-  const showHideElements = (arrShow, arrHide) => {
-    if (arrShow.length > 0) arrShow.forEach(elem => elem.classList.remove('hidden'));
-    if (arrHide.length > 0) arrHide.forEach(elem => elem.classList.add('hidden'));
-  }
-
-  const playAgain = () => {
-    elem.arrCells.forEach(item => {
-      item.classList.remove('filled');
-    })
-
-    board = createBoard();
-
-    currentPlayer = 0;
-    switchElements(
-      [...elem.arrElementsX, elem.displayName],
-      [...elem.arrElementsO, ...elem.arrCells, elem.buttonAgain, elem.displayEnd]
-    );
-
-    elem.buttonAgain.disabled = true;
-
-    setTimeout(() => {
-      elem.arrCells.forEach(item => {
-        item.textContent = ''
-      });
-      board.isBlocked = false;
-      board.show();
-      playPrompt();
-      switchElements(elem.arrCells, []);
-    }, 600);
-
-
-  }
-
   const initGame = async () => {
-
     elem.arrCells.forEach(item => {
       item.classList.remove('filled');
     })
@@ -168,9 +141,7 @@ const game = (() => {
 
     elem.buttonRestart.disabled = false;
     elem.buttonAgain.disabled = false;
-    board.show();
     board.isBlocked = false;
-    playPrompt();
   }
 
   const checkForWin = () => {
@@ -201,13 +172,35 @@ const game = (() => {
     switchElements([elem.buttonAgain, elem.displayEnd], [...elem.arrCells, elem.displayName]);
     elem.buttonAgain.disabled = false;
     if (end === 'win') {
-      console.log(`${players[currentPlayer].name}, you've won! Congratulations!`);
       elem.displayEnd.textContent = `${players[currentPlayer].name} won!\nCongratulations!`
     } else if (end === 'draw') {
-      console.log(`It's a draw!`);
       elem.displayEnd.textContent = `It's a draw!`;
     }
     return 1;
+  }
+
+  const play = (row, column) => {
+    if (!board.isBlocked) {
+      if (board.update(players[currentPlayer].symbol, row, column)) {
+        fillCell(row * 3 + column);
+        if (!checkForWin()) {
+          currentPlayer = ++currentPlayer % 2;
+          toggleElements([...elem.arrElementsX, ...elem.arrElementsO]);
+        } else return
+      };
+    }
+  }
+
+  /* -------------------------------- Handlers -------------------------------- */
+
+  const handleInput = () => {
+    if (elem.inputName.value) {
+      elem.buttonAccept.classList.add("switched-on");
+      elem.buttonAccept.disabled = false;
+    } else {
+      elem.buttonAccept.classList.remove("switched-on");
+      elem.buttonAccept.disabled = true;
+    }
   }
 
   const restartGame = () => {
@@ -218,63 +211,52 @@ const game = (() => {
     initGame();
   }
 
-  const fillCell = index => {
-    elem.arrCells[index].textContent = players[currentPlayer].symbol;
-    switchElements([], [elem.arrCells[index]]);
-    elem.arrCells[index].classList.add('filled');
+  const playAgain = () => {
+    elem.arrCells.forEach(item => {
+      item.classList.remove('filled');
+    })
+
+    board = createBoard();
+
+    currentPlayer = 0;
+    switchElements(
+      [...elem.arrElementsX, elem.displayName],
+      [...elem.arrElementsO, ...elem.arrCells, elem.buttonAgain, elem.displayEnd]
+    );
+
+    elem.buttonAgain.disabled = true;
+
+    setTimeout(() => {
+      elem.arrCells.forEach(item => {
+        item.textContent = ''
+      });
+      board.isBlocked = false;
+      switchElements(elem.arrCells, []);
+    }, 600);
   }
 
-  const play = (row, column) => {
-    if (!board.isBlocked) {
-      if (board.update(players[currentPlayer].symbol, row, column)) {
-        board.show();
-        fillCell(row * 3 + column);
-        if (!checkForWin()) {
-          currentPlayer = ++currentPlayer % 2;
-          toggleElements([...elem.arrElementsX, ...elem.arrElementsO]);
-        } else return
-      } else {
-        board.show();
-        console.log('Wrong move!');
-      };
-      playPrompt();
-    }
+  const handleCell = event => {
+
+    const index = Number(event.target.dataset.index)
+    const row = Math.floor(index / 3);
+    const col = index % 3;
+
+    play(row, col);
   }
+
+  /* --------------------------------- Events --------------------------------- */
+
+  elem.inputName.addEventListener('input', handleInput);
+  elem.buttonRestart.addEventListener('click', restartGame);
+  elem.buttonAgain.addEventListener('click', playAgain);
+  elem.arrCells.forEach(item => {
+    item.addEventListener('click', handleCell);
+  })
+
+  /* -------------------------------- Init game ------------------------------- */
 
   document.addEventListener("DOMContentLoaded", () => {
     initGame();
   });
 
-  return { restartGame, play, playAgain };
-
 })();
-
-/* -------------------------------- Handlers -------------------------------- */
-
-const handleInput = () => {
-  if (elem.inputName.value) {
-    elem.buttonAccept.classList.add("switched-on");
-    elem.buttonAccept.disabled = false;
-  } else {
-    elem.buttonAccept.classList.remove("switched-on");
-    elem.buttonAccept.disabled = true;
-  }
-}
-
-const handleCell = event => {
-
-  const index = Number(event.target.dataset.index)
-  const row = Math.floor(index / 3);
-  const col = index % 3;
-
-  game.play(row, col)
-}
-
-/* --------------------------------- Events --------------------------------- */
-
-elem.inputName.addEventListener('input', handleInput);
-elem.buttonRestart.addEventListener('click', game.restartGame);
-elem.buttonAgain.addEventListener('click', game.playAgain);
-elem.arrCells.forEach(item => {
-  item.addEventListener('click', handleCell);
-})
