@@ -79,8 +79,19 @@ const game = (() => {
     if (type !== 'class' && type !== 'text') return;
 
     elem.arrCells.forEach(item => {
-      type === 'class' ? item.classList.remove('filled') : item.textContent = '';
+      type === 'class' ? item.classList.remove('filled', 'winning') : item.textContent = '';
     });
+  }
+
+  const highlightCells = cells => {
+    cells.forEach(cell => {
+      const index = calculateIndex(cell[0], cell[1]);
+      elem.arrCells[index].classList.add('winning');
+    })
+  }
+
+  const calculateIndex = (row, column) => {
+    return row * 3 + column;
   }
 
   /* ------------------------------- Game logic ------------------------------- */
@@ -147,21 +158,33 @@ const game = (() => {
   }
 
   const checkForWin = () => {
-    const checkLine = (a, b, c) => a && a === b && b === c;
     const brd = board.board;
     let isDraw = true;
+    let winningCells = [];
 
-    if (
-      checkLine(brd[0][0], brd[1][1], brd[2][2]) ||
-      checkLine(brd[0][2], brd[1][1], brd[2][0])
-    ) return handleEnd('win');
+    const checkLine = (a, b, c) => a && a === b && b === c;
 
-    for (let i = 0; i <= 2; i++) {
-      if (brd[i].includes('')) isDraw = false;
-      if (
-        checkLine(brd[0][i], brd[1][i], brd[2][i]) ||
-        checkLine(brd[i][0], brd[i][1], brd[i][2])
-      ) return handleEnd('win');
+    if (checkLine(brd[0][0], brd[1][1], brd[2][2])) {
+      winningCells = [[0, 0], [1, 1], [2, 2]];
+    } else if (checkLine(brd[0][2], brd[1][1], brd[2][0])) {
+      winningCells = [[0, 2], [1, 1], [2, 0]];
+    } else {
+      for (let i = 0; i <= 2; i++) {
+        if (brd[i].includes('')) isDraw = false;
+        if (checkLine(brd[0][i], brd[1][i], brd[2][i])) {
+          winningCells = [[0, i], [1, i], [2, i]];
+          break;
+        }
+        if (checkLine(brd[i][0], brd[i][1], brd[i][2])) {
+          winningCells = [[i, 0], [i, 1], [i, 2]];
+          break;
+        }
+      }
+    }
+
+    if (winningCells.length) {
+      highlightCells(winningCells);
+      return handleEnd('win');
     }
 
     if (isDraw) return handleEnd('draw');
@@ -184,7 +207,7 @@ const game = (() => {
   const play = (row, column) => {
     if (!board.isBlocked) {
       if (board.update(PLAYERS[currentPlayer].symbol, row, column)) {
-        fillCell(row * 3 + column);
+        fillCell(calculateIndex(row, column));
         if (!checkForWin()) {
           currentPlayer = ++currentPlayer % 2;
           toggleElements([...elem.arrElementsX, ...elem.arrElementsO]);

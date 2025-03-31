@@ -64,9 +64,11 @@ ol {
   --color-background: #ece9e6;
   --color-border: #dddddd;
   --color-shadow: rgba(0, 0, 0, 0.12);
+  --color-highlight: #ececec;
 
   --transitionShort: .1s;
-  --transitionLong: .6s;
+  --transitionLong: .8s;
+  --transitionMedium: .5s;
 }
 
 /* ---------------------------- Basic components ---------------------------- */
@@ -254,7 +256,7 @@ body {
 
     .display__button {
       z-index: 1;
-      transition: all var(--transitionShort), transform .45s, opacity .45s;
+      transition: all var(--transitionShort), transform var(--transitionMedium), opacity var(--transitionMedium);
 
       background: none;
       border: none;
@@ -359,7 +361,7 @@ body {
 /* ------------------------------- Game board ------------------------------- */
 
 .game-board__cell {
-  transition: all var(--transitionShort), color .35s;
+  transition: all var(--transitionShort), color var(--transitionMedium);
 
   background: var(--color-white);
   border: 0.15rem solid var(--color-border);
@@ -377,7 +379,12 @@ body {
   }
 
   &.filled {
-    color: var(--color-black);
+    color: var(--color-darkgray);
+  }
+
+  &.winning {
+    background: var(--color-highlight);
+    transition: var(--transitionLong);
   }
 }
 
