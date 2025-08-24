@@ -1,778 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>Tic Tac Toe</title>
-</head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GIF Icon Tic Tac Toe</title>
 <style>
-  /* -------------------------------- CSS Reset ------------------------------- */
-.game-board__cell img {
-  width: 80%;
-  height: 80%;
-  object-fit: contain;
-}
+  :root{
+    --bg0:#0a0a0a;
+    --bg1:#111;
+    --bg2:#181818;
+    --card:#0f0f12;
+    --edge:#ffffff14;
+    --edge-strong:#ffffff22;
+    --text:#fafafa;
+    --muted:#cfcfcf;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+    --win:#c6ffb3;
+    --draw:#f1d17a;
 
-html,
-body {
-  height: 100%;
-
-}
-
-html {
-  font-size: 10px;
-  user-select: none;
-  -webkit-user-select: none;
-  min-height: 600px;
-  min-width: 500px;
-}
-
-body {
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-
-}
-
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-}
-
-input,
-button,
-textarea,
-select {
-  font: inherit;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-ul,
-ol {
-  list-style: none;
-}
-
-/* -------------------------------- Variables ------------------------------- */
-
-:root {
-  --color-black: #1a1a1aff;
-  --color-black-transparent: #1a1a1a00;
-  --color-white: #ffffff;
-  --color-darkgray: #404040;
-  --color-gray: #909090;
-  --color-lightgray: #bbb;
-  --color-background: #ece9e6;
-  --color-border: #dddddd;
-  --color-shadow: rgba(0, 0, 0, 0.12);
-  --color-highlight: #ececec;
-
-  --transitionShort: .1s;
-  --transitionLong: .8s;
-  --transitionMedium: .5s;
-}
-
-/* ---------------------------- Basic components ---------------------------- */
-
-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  background: linear-gradient(135deg, var(--color-background), var(--color-white));
-
-  color: var(--color-black);
-  font-family: 'Space Mono', monospace;
-}
-
-.wrapper {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.cell {
-  display: flex;
-  height: 10rem;
-  justify-content: center;
-  align-items: center;
-
-  border-radius: 1rem;
-}
-
-.game-container {
-  display: grid;
-  padding: 2rem;
-  grid-template-columns: repeat(3, 10rem);
-  grid-template-rows: repeat(3, 10rem);
-  justify-content: center;
-  align-items: center;
-  gap: 1.2rem;
-
-  background: var(--color-white);
-  border-radius: 2rem;
-  box-shadow: 0 4px 8px var(--color-shadow);
-}
-
-/* --------------------------------- Display -------------------------------- */
-
-.display {
-  position: relative;
-  overflow: hidden;
-
-  width: 100%;
-  margin: 0 0 .5rem;
-  padding: 1rem 2rem;
-
-  background: var(--color-darkgray);
-  border-radius: 1rem;
-
-  font-size: 2rem;
-  color: var(--color-white);
-  letter-spacing: 0.1rem;
-
-  &::after {
-    content: '';
-    position: absolute;
-    display: block;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.6), inset 0 -4px 6px rgba(255, 255, 255, 0.1);
+    --radius:18px;
+    --shadow-1:0 12px 40px rgba(0,0,0,.55);
+    --shadow-2:0 6px 20px rgba(0,0,0,.45);
   }
 
-  .switch {
-    position: absolute;
-    transition: var(--transitionLong);
-    width: 100%;
-    padding: inherit;
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, Roboto, Arial;
+    background:
+      radial-gradient(1200px 900px at -10% -20%, #1d1d1d 0%, transparent 55%),
+      radial-gradient(1000px 800px at 110% 10%, #1b1b1b 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg2), var(--bg0));
+    display:grid; place-items:center; padding:28px;
   }
 
-  &.small {
+  .app{ width:min(96vw,820px); display:flex; flex-direction:column; gap:18px; }
 
-    .switch {
+  .title{
+    display:flex; align-items:center; gap:12px;
+    font-weight:900; letter-spacing:.4px;
+    font-size:clamp(22px,3.6vw,40px);
+  }
+  .spark{
+    width:30px;height:30px;border-radius:10px;
+    background: conic-gradient(from 120deg, #ffffff, #9aa0a6, #000000 70%, #ffffff);
+    box-shadow: 0 10px 30px rgba(255,255,255,.15);
+    animation: bob 3.4s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
 
-      &.start {
-        left: -10rem;
-      }
-
-      &.game {
-        left: 10rem;
-      }
-
-      &.switched-on {
-        left: 0;
-      }
-    }
-
-    .display__title {
-      margin-top: -.35rem;
-
-      font-size: 2.7rem;
-      text-align: center;
-      font-style: italic;
-      font-weight: bold;
-      line-height: 1;
-      letter-spacing: .4rem;
-
-      .display__title-element {
-        margin-bottom: -.25rem;
-      }
-    }
-
-    .display__symbol {
-      display: flex;
-      position: absolute;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Space Grotesk';
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
-      font-size: 8.5rem;
-      margin-left: .2rem;
-      font-weight: 300;
-
-      .symbol {
-        --displacement: 8rem;
-
-        position: absolute;
-        transition: var(--transitionLong);
-
-        &.x {
-          transform: translateX(calc(-1 * var(--displacement)));
-        }
-
-        &.o {
-          transform: translateX(var(--displacement));
-        }
-
-        &.switched-on {
-          transform: translateX(0);
-        }
-      }
-
-    }
+  .row{
+    display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
+    background: linear-gradient(180deg, #141414, #0f0f0f);
+    border-radius: var(--radius);
+    border:1px solid var(--edge);
+    padding:12px 14px;
+    box-shadow: var(--shadow-1), inset 0 1px 0 #ffffff14, inset 0 -1px 0 #00000080;
   }
 
-  &.large {
-    grid-column: span 2;
-
-    .switch {
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: space-between;
-
-      &.start {
-        margin-top: -.5rem;
-        left: 20rem;
-      }
-
-      &.game {
-        margin-top: -.3rem;
-        left: -20rem;
-        height: 100%;
-        padding-top: 1.5rem;
-        align-items: flex-start;
-      }
-
-      &.switched-on {
-        left: 0;
-      }
-    }
-
-    .display__message {
-      font-size: 1.6rem;
-      text-align: center;
-      margin-top: 0;
-
-      &.player {
-        display: inline-block;
-        text-align: left;
-        margin: 0;
-      }
-    }
-
-    .display__button {
-      z-index: 1;
-      transition: all var(--transitionShort), transform var(--transitionMedium), opacity var(--transitionMedium);
-
-      background: none;
-      border: none;
-
-
-      font-size: 1.4rem;
-      color: var(--color-gray);
-      text-decoration: none;
-      text-align: right;
-
-      &.accept,
-      &.again {
-        opacity: 0;
-        transform: translateX(9rem);
-      }
-
-      &.switched-on {
-        display: inline-block;
-        transform: translateX(0);
-        opacity: 1;
-        cursor: pointer;
-
-        &:hover {
-          color: var(--color-white);
-          text-decoration: underline;
-        }
-      }
-
-    }
-
-    .display__input {
-      display: table;
-      width: 100%;
-      padding: .1rem .4rem;
-      margin-top: -.2rem;
-      z-index: 99;
-
-      background: none;
-      border: none;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-
-      font-size: 1.6rem;
-      color: white;
-      text-align: center;
-
-      &:focus {
-        outline: none;
-      }
-    }
-
-    .display__name {
-      transform: translateX(-20rem);
-
-      position: absolute;
-      line-height: 1.2;
-      width: 100%;
-      font-size: 2rem;
-      bottom: 1.5rem;
-      letter-spacing: .1rem;
-
-      .name {
-        position: relative;
-
-        &::before {
-          content: '';
-          display: block;
-          height: .5em;
-          width: 2rem;
-          background: white;
-          position: absolute;
-          top: .5em;
-          left: -5rem;
-          transition: var(--transitionLong);
-        }
-
-        &.switched-on::before {
-          left: -3rem;
-        }
-      }
-    }
-
-    .display__end {
-      font-size: .75em;
-      line-height: 1.4;
-      top: 4rem;
-      transform: translateX(20rem);
-    }
-
-    .display__name,
-    .display__end {
-      position: absolute;
-      transition: var(--transitionLong);
-
-      &.switched-on {
-        transform: translateX(0rem);
-      }
-    }
-  }
-}
-
-
-/* ------------------------------- Game board ------------------------------- */
-
-.game-board__cell {
-  transition: all var(--transitionShort), color var(--transitionMedium);
-
-  background: var(--color-white);
-  border: 0.15rem solid var(--color-border);
-  box-shadow: 0 2px 4px var(--color-shadow);
-
-  font-size: 5.5rem;
-  font-family: 'Space Grotesk';
-  font-weight: 300;
-  color: var(--color-black-transparent);
-
-  &.switched-on:hover {
-    background-color: #f5f5f5;
-    transform: scale(1.05);
-    cursor: pointer;
+  .status{ font-weight:800; letter-spacing:.3px; }
+  .badge{
+    margin-left:10px; padding:6px 12px; border-radius:999px;
+    font-size:12px; font-weight:900; color:#0d0f12;
+    background: linear-gradient(135deg, #f5f5f5, #bfbfbf);
+    box-shadow: 0 6px 16px rgba(255,255,255,.22);
   }
 
-  &.filled {
-    color: var(--color-darkgray);
+  .toggle{ display:flex; align-items:center; gap:10px; }
+  .switch{
+    appearance:none; width:60px; height:32px; border-radius:999px;
+    background: linear-gradient(180deg,#1b1b1b,#0f0f0f);
+    border:1px solid var(--edge-strong);
+    position:relative; cursor:pointer;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,.6);
+    transition: background .25s ease, border-color .25s ease;
+  }
+  .switch::after{
+    content:""; position:absolute; top:50%; left:6px; transform:translateY(-50%);
+    width:22px; height:22px; border-radius:50%;
+    background: linear-gradient(180deg,#fff,#cfcfcf);
+    box-shadow: 0 4px 14px rgba(255,255,255,.35);
+    transition:left .25s ease;
+  }
+  .switch:checked{ background: linear-gradient(180deg,#232323,#101010); border-color:#ffffff33; }
+  .switch:checked::after{ left:32px; }
+
+  .board-card{
+    background: linear-gradient(180deg, #151515, #0c0c0c);
+    border-radius: calc(var(--radius) + 2px);
+    border:1px solid var(--edge-strong);
+    padding:18px;
+    box-shadow: var(--shadow-1);
   }
 
-  &.winning {
-    background: var(--color-highlight);
-    transition: var(--transitionLong);
-  }
-}
-
-/* --------------------------------- Footer --------------------------------- */
-
-.footer {
-  font-family: 'Space Grotesk';
-  display: flex;
-  align-items: flex-end;
-  font-size: 1.8rem;
-  flex: 0;
-  color: rgba(0, 0, 0, .3);
-  margin: 1.2rem 0;
-
-  .footer__wrapper {
-    display: flex;
-    align-items: center;
-    gap: 0 1rem;
+  .board{
+    width:100%; aspect-ratio:1;
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;
   }
 
-  .footer__name {
-    transition: .1s;
+  .cell{
+    position:relative; overflow:hidden; border-radius:16px;
+    background:
+      radial-gradient(180px 160px at 30% 20%, #1f1f1f 0%, transparent 60%),
+      linear-gradient(180deg, #121212, #0a0a0a);
+    border:1px solid #ffffff12;
+    display:grid; place-items:center;
+    cursor:pointer;
+    transition: transform .14s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+    box-shadow: var(--shadow-2);
+  }
+  .cell::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background: linear-gradient(135deg, #ffffff0d, #00000000 40%, #ffffff14 75%);
+    mix-blend-mode: screen;
+  }
+  .cell:hover{
+    transform: translateY(-2px);
+    border-color:#ffffff2b;
+    box-shadow: 0 10px 24px rgba(255,255,255,.08);
+  }
+  .cell:active{ transform: translateY(0) }
+  .cell.disabled{ cursor:not-allowed; opacity:.9 }
 
-    &:hover {
-      text-decoration: underline;
-      color: rgba(0, 0, 0, .5);
-    }
+  /* GIF icon container */
+  .gif-icon{
+    width: 68%;
+    aspect-ratio: 1;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* subtle appear effect */
+    transform: scale(.96);
+    opacity: 0;
+    animation: pop .28s ease forwards;
+    filter: drop-shadow(0 6px 18px rgba(255,255,255,.18));
+  }
+  @keyframes pop{
+    to{ transform: scale(1); opacity:1 }
   }
 
-  .footer__link {
-    margin-top: .1rem;
-    font-size: 2.1rem;
-    transition: .25s;
-    transform: scale(1);
-
-    &:hover {
-      margin-left: 0;
-      transform: scale(1.15);
-      color: rgba(0, 0, 0, .5);
-    }
+  /* shimmer pass */
+  .shine{
+    position:absolute; inset:0; pointer-events:none; opacity:0;
+    background: linear-gradient(130deg, #ffffff00 20%, #ffffff18 50%, #ffffff00 80%);
+    transform: translateX(-120%);
+    filter: blur(0.4px);
   }
-}
+  .cell.placed .shine{ opacity:1; animation: sweep .65s ease forwards; }
+  @keyframes sweep{ to { transform: translateX(120%); opacity:.0 } }
 
-
-/* -------------------------------- Modifiers ------------------------------- */
-
-.bold {
-  font-weight: bolder;
-}
-
-.hidden {
-  display: none;
+  /* winning overlay line */
+  .overlay{ position:relative; }
+  .win-svg{
+    position:absolute; inset:18px;
+    pointer-events:none;
   }
+  .win-svg line{
+    stroke: var(--win);
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 0 1000;
+    animation: win-line .64s cubic-bezier(.16,.84,.2,1) forwards;
+    filter: drop-shadow(0 10px 24px rgba(198,255,179,.35));
+  }
+  @keyframes win-line{ to { stroke-dasharray: 1000 0 } }
+
+  .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+  .btn{
+    appearance:none; border:none; cursor:pointer; font-weight:900; letter-spacing:.3px;
+    padding:12px 16px; border-radius:14px; color:#0b0d10;
+    background: linear-gradient(135deg,#ffffff,#cfcfcf);
+    box-shadow: 0 8px 22px rgba(255,255,255,.22);
+    transition: transform .12s ease, box-shadow .2s ease;
+  }
+  .btn:hover{ transform: translateY(-1px) }
+  .btn:active{ transform: translateY(0) }
+  .btn.alt{
+    color:#0b0d10;
+    background: linear-gradient(135deg,#c1ffd8,#e8fff3);
+    box-shadow: 0 8px 22px rgba(193,255,216,.22);
+  }
+
+  .subtle{ color:var(--muted); font-size:12px; opacity:.9 }
 </style>
+</head>
 <body>
-  <div class="wrapper">
-    <div class="game-container">
-      <div class="cell display small">
-        <div class="display__title switch start">
-          <div class="display__title-element">Tic</div>
-          <div class="display__title-element">Tac</div>
-          <div class="display__title-element">Toe</div>
-        </div>
-        <div class="display__symbol game switch">
-          <div class="symbol x"><img src="x.png" alt="X"></div>
-          <div class="symbol o"><img src="o.png" alt="O"></div>
-        </div>
-      </div>
-      <div class="cell display large">
-        <div class="switch start">
-          <div class="display__message player bold">Player <span class="symbol"></span></div>
-          <button class="display__button accept">Accept</button>
-          <div class="display__message">Enter your name</div>
-          <input type="text" class="display__input" maxlength="12">
-        </div>
-        <div class="switch game">
-          <button class="display__button restart switched-on">Restart</button>
-          <button class="display__button again">Play again</button>
-          <div class="display__name">
-            <div class="name x"></div>
-            <div class="name o"></div>
-          </div>
-          <div class="display__end"></div>
+  <div class="app">
+    <div class="title">
+      <div class="spark"></div>
+      BW Gradient Tic Tac Toe (GIF Icons)
+    </div>
+
+    <div class="row controls">
+      <div class="toggle">
+        <input id="mode" class="switch" type="checkbox"/>
+        <div>
+          <div style="font-weight:800">VS Computer</div>
+          <div class="subtle">Toggle single‑player</div>
         </div>
       </div>
-      <div class="cell game-board__cell" data-index="0"></div>
-      <div class="cell game-board__cell" data-index="1"></div>
-      <div class="cell game-board__cell" data-index="2"></div>
-      <div class="cell game-board__cell" data-index="3"></div>
-      <div class="cell game-board__cell" data-index="4"></div>
-      <div class="cell game-board__cell" data-index="5"></div>
-      <div class="cell game-board__cell" data-index="6"></div>
-      <div class="cell game-board__cell" data-index="7"></div>
-      <div class="cell game-board__cell" data-index="8"></div>
+      <div class="status">Turn: <span id="turn">X</span><span class="badge" id="badge">Playing</span></div>
+      <div style="display:flex; gap:10px">
+        <button id="reset" class="btn">Restart</button>
+        <button id="swap" class="btn alt">Swap First</button>
+      </div>
+    </div>
+
+    <div class="board-card overlay">
+      <div id="board" class="board" aria-label="Tic Tac Toe board"></div>
+      <svg class="win-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <line id="winLine" x1="0" y1="0" x2="0" y2="0" opacity="0"/>
+      </svg>
+    </div>
+
+    <div class="row" style="justify-content:center">
+      <div class="subtle">Place x.gif and o.gif beside this file. Transparent backgrounds look best.</div>
     </div>
   </div>
-  <script>
-    const game = (() => {
 
-  /* -------------------------------- Elements -------------------------------- */
+<script>
+(function(){
+  const boardEl = document.getElementById('board');
+  const turnEl  = document.getElementById('turn');
+  const badgeEl = document.getElementById('badge');
+  const resetEl = document.getElementById('reset');
+  const swapEl  = document.getElementById('swap');
+  const modeEl  = document.getElementById('mode');
+  const winLine = document.getElementById('winLine');
 
-  const elem = {
-    buttonAccept: document.querySelector('.display__button.accept'),
-    buttonRestart: document.querySelector('.display__button.restart'),
-    buttonAgain: document.querySelector('.display__button.again'),
-    inputName: document.querySelector('.display__input'),
-    playerNameSymbol: document.querySelector('.display__message.player .symbol'),
-    smallStartDisplay: document.querySelector('.display.small .start'),
-    smallGameDisplay: document.querySelector('.display.small .game'),
-    largeStartDisplay: document.querySelector('.display.large .start'),
-    largeGameDisplay: document.querySelector('.display.large .game'),
-    displayName: document.querySelector('.display__name'),
-    displayEnd: document.querySelector('.display__end'),
-    symbolX: document.querySelector('.display__symbol .symbol.x'),
-    symbolO: document.querySelector('.display__symbol .symbol.o'),
-    nameX: document.querySelector('.display__name .name.x'),
-    nameO: document.querySelector('.display__name .name.o'),
-    arrCells: Array.from(document.querySelectorAll('.game-board__cell'))
+  const WINS = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  let cells = Array(9).fill(null);
+  let playing = true;
+  let first = 'X';
+  let turn = 'X';
+  let vsCPU = false;
+
+  function makeCell(i){
+    const btn = document.createElement('button');
+    btn.className = 'cell';
+    btn.setAttribute('aria-label','Cell '+(i+1));
+    btn.dataset.i = i;
+
+    const shine = document.createElement('div');
+    shine.className = 'shine';
+    btn.appendChild(shine);
+
+    btn.addEventListener('click', onClick);
+    return btn;
   }
 
-  elem.arrStartDisplay = [elem.smallStartDisplay, elem.largeStartDisplay];
-  elem.arrGameDisplay = [elem.smallGameDisplay, elem.largeGameDisplay];
-  elem.arrElementsX = [elem.symbolX, elem.nameX];
-  elem.arrElementsO = [elem.symbolO, elem.nameO];
+  function renderBoard(){
+    boardEl.innerHTML='';
+    for(let i=0;i<9;i++) boardEl.appendChild(makeCell(i));
+  }
 
-  /* ---------------------------- Board constructor --------------------------- */
+  function setGif(el, who){
+    const icon = document.createElement('div');
+    icon.className = 'gif-icon';
+    icon.style.backgroundImage = who === 'X' ? 'url("./x.gif")' : 'url("./o.gif")';
+    el.appendChild(icon);
+    el.classList.add('placed');
+  }
 
-  function createBoard() {
-    const board = [
-      ['', '', ''],
-      ['', '', ''],
-      ['', '', ''],
-    ];
+  function onClick(e){
+    const i = +e.currentTarget.dataset.i;
+    if(!playing || cells[i]) return;
+    move(i, turn);
 
-    let isBlocked = true;
-
-    const update = (symbol, row, column) => {
-      if (board[row][column] === '') {
-        board[row][column] = symbol;
-        return 1;
-      } else return 0;
+    if(vsCPU && playing && turn !== first){
+      setTimeout(cpuTurn, 360);
     }
-
-    return { update, board, isBlocked };
   }
 
-  /* ------------------------ Game variables/constants ------------------------ */
-
-  let board = createBoard();
-  const PLAYERS = [];
-  let currentPlayer = 0;
-
-  /* ---------------------------- Helper functions ---------------------------- */
-
-  const switchElements = (arrOn, arrOff) => {
-    arrOn.forEach(elem => elem.classList.add('switched-on'));
-    arrOff.forEach(elem => elem.classList.remove('switched-on'));
+  function move(i, p){
+    cells[i] = p;
+    const el = boardEl.children[i];
+    el.classList.add('disabled');
+    setGif(el, p);
+    evaluate();
   }
 
-  const toggleElements = arr => {
-    arr.forEach(elem => elem.classList.toggle('switched-on'));
+  function winner(board){
+    for(const [a,b,c] of WINS){
+      if(board[a] && board[a]===board[b] && board[a]===board[c]) return {p:board[a], line:[a,b,c]};
+    }
+    return null;
   }
 
-  const showHideElements = (arrShow, arrHide) => {
-    arrShow.forEach(elem => elem.classList.remove('hidden'));
-    arrHide.forEach(elem => elem.classList.add('hidden'));
+  function evaluate(){
+    const w = winner(cells);
+    if(w){
+      playing=false;
+      badgeEl.textContent='Winner: '+w.p;
+      turnEl.textContent = w.p;
+      drawWin(w.line);
+      disableAll();
+      return;
+    }
+    if(cells.every(Boolean)){
+      playing=false;
+      badgeEl.textContent='Draw';
+      badgeEl.style.background = 'linear-gradient(135deg, #ffe29a, #ffb3a0)';
+      turnEl.textContent='-';
+      disableAll();
+      return;
+    }
+    swapTurn();
   }
 
-  const fillCell = index => {
-  elem.arrCells[index].innerHTML = `<img src="${PLAYERS[currentPlayer].symbol === 'X' ? 'x.png' : 'o.png'}" alt="${PLAYERS[currentPlayer].symbol}" style="width:80%; height:80%;">`;
-
-
-  const unfillCell = type => {
-    if (type !== 'class' && type !== 'text') return;
-
-    elem.arrCells.forEach(item => {
-      type === 'class' ? item.classList.remove('filled', 'winning') : item.textContent = '';
-    });
+  function swapTurn(){
+    turn = (turn==='X') ? 'O' : 'X';
+    turnEl.textContent = turn;
+    badgeEl.textContent = 'Playing';
+    badgeEl.style.background = 'linear-gradient(135deg, #f5f5f5, #bfbfbf)';
   }
 
-  const highlightCells = cells => {
-    cells.forEach(cell => {
-      const index = calculateIndex(cell[0], cell[1]);
-      elem.arrCells[index].classList.add('winning');
-    })
+  function disableAll(){
+    for(const el of boardEl.children) el.classList.add('disabled');
   }
 
-  const calculateIndex = (row, column) => {
-    return row * 3 + column;
+  function enableEmpty(){
+    for(let i=0;i<9;i++){
+      const el = boardEl.children[i];
+      if(!cells[i]) el.classList.remove('disabled');
+    }
   }
 
-  /* ------------------------------- Game logic ------------------------------- */
+  function reset(){
+    cells = Array(9).fill(null);
+    playing = true;
+    turn = first;
+    turnEl.textContent = turn;
+    badgeEl.textContent = 'Playing';
+    badgeEl.style.background = 'linear-gradient(135deg, #f5f5f5, #bfbfbf)';
+    clearWin();
+    renderBoard();
 
-  const createPlayer = (symbol) => {
-    return new Promise(resolve => {
-      elem.playerNameSymbol.textContent = symbol;
-      elem.inputName.value = '';
-      setTimeout(() => elem.inputName.focus(), 100);
-
-      const handleEnterPress = event => {
-        if (event.key === "Enter") handleAccept();
-      }
-
-      const handleAccept = () => {
-        const name = elem.inputName.value.trim();
-        if (name) {
-          elem.buttonAccept.removeEventListener('click', handleAccept);
-          elem.inputName.removeEventListener('keydown', handleEnterPress);
-          elem.inputName.value = '';
-          handleInput();
-          resolve({ name, symbol });
-        }
-      };
-
-      elem.buttonAccept.addEventListener('click', handleAccept);
-      elem.inputName.addEventListener('keydown', handleEnterPress);
-    })
+    if(vsCPU && turn !== human()){
+      setTimeout(cpuTurn, 300);
+    }
   }
 
-  const initGame = async () => {
+  function human(){ return first; }
 
-    unfillCell('class');
-    switchElements([...elem.arrStartDisplay], [...elem.arrGameDisplay, elem.nameX, elem.nameO]);
+  // Simple tactical CPU (win/block/center/corners/sides)
+  function cpuTurn(){
+    if(!playing) return;
+    const ai = (first==='X') ? 'O' : 'X';
+    const humanP = first;
 
-    elem.smallStartDisplay.addEventListener("transitionend", () => {
-      switchElements([elem.symbolX], [elem.symbolO]);
-    }, { once: true });
+    const w = findWinning(cells, ai);
+    if(w != null){ move(w, ai); return; }
 
-    PLAYERS.splice(0, PLAYERS.length,
-      await createPlayer('X'),
-      await createPlayer('O')
-    );
+    const b = findWinning(cells, humanP);
+    if(b != null){ move(b, ai); return; }
 
-    showHideElements([], [elem.displayEnd]);
+    if(!cells[4]){ move(4, ai); return; }
 
-    currentPlayer = 0;
-    elem.nameX.textContent = PLAYERS[0].name;
-    elem.nameO.textContent = PLAYERS[1].name;
+    const corners = [0,2,6,8].filter(i=>!cells[i]);
+    if(corners.length){ move(random(corners), ai); return; }
 
-    unfillCell('text');
-    switchElements(
-      [...elem.arrElementsX, ...elem.arrCells, ...elem.arrGameDisplay, elem.displayName],
-      [...elem.arrStartDisplay, elem.buttonAgain, elem.displayEnd]
-    );
-
-    setTimeout(() => {
-      showHideElements([elem.displayEnd], []);
-    }, 1000);
-
-    elem.buttonRestart.disabled = false;
-    elem.buttonAgain.disabled = false;
-    board.isBlocked = false;
+    const sides = [1,3,5,7].filter(i=>!cells[i]);
+    if(sides.length){ move(random(sides), ai); return; }
   }
 
-  const checkForWin = () => {
-    const brd = board.board;
-    let isDraw = true;
-    let winningCells = [];
-
-    const checkLine = (a, b, c) => a && a === b && b === c;
-
-    if (checkLine(brd[0][0], brd[1][1], brd[2][2])) {
-      winningCells = [[0, 0], [1, 1], [2, 2]];
-    } else if (checkLine(brd[0][2], brd[1][1], brd[2][0])) {
-      winningCells = [[0, 2], [1, 1], [2, 0]];
-    } else {
-      for (let i = 0; i <= 2; i++) {
-        if (brd[i].includes('')) isDraw = false;
-        if (checkLine(brd[0][i], brd[1][i], brd[2][i])) {
-          winningCells = [[0, i], [1, i], [2, i]];
-          break;
-        }
-        if (checkLine(brd[i][0], brd[i][1], brd[i][2])) {
-          winningCells = [[i, 0], [i, 1], [i, 2]];
-          break;
-        }
+  function findWinning(board, who){
+    for(const [a,b,c] of WINS){
+      const trio=[board[a],board[b],board[c]];
+      const count = trio.filter(v=>v===who).length;
+      const empty = trio.findIndex(v=>!v);
+      if(count===2 && empty>-1){
+        const idx=[a,b,c][empty];
+        if(!board[idx]) return idx;
       }
     }
-
-    if (winningCells.length) {
-      highlightCells(winningCells);
-      return handleEnd('win');
-    }
-
-    if (isDraw) return handleEnd('draw');
-
-    return 0;
+    return null;
   }
 
-  const handleEnd = end => {
-    board.isBlocked = true;
-    switchElements([elem.buttonAgain, elem.displayEnd], [...elem.arrCells, elem.displayName]);
-    elem.buttonAgain.disabled = false;
-    if (end === 'win') {
-      elem.displayEnd.textContent = `${PLAYERS[currentPlayer].name} won!\nCongratulations!`
-    } else if (end === 'draw') {
-      elem.displayEnd.textContent = `It's a draw!`;
-    }
-    return 1;
+  function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function drawWin(lineIdxs){
+    const map = (i)=>{
+      const r = Math.floor(i/3), c = i%3;
+      const step = 100/3;
+      return [c*step + step/2, r*step + step/2];
+    };
+    const [a,,c] = lineIdxs;
+    const [x1,y1] = map(a);
+    const [x2,y2] = map(c);
+    winLine.setAttribute('x1', x1);
+    winLine.setAttribute('y1', y1);
+    winLine.setAttribute('x2', x2);
+    winLine.setAttribute('y2', y2);
+    winLine.setAttribute('opacity','1');
+    // retrigger css animation
+    winLine.style.animation='none'; void winLine.offsetWidth; winLine.style.animation=null;
   }
 
-  const play = (row, column) => {
-    if (!board.isBlocked) {
-      if (board.update(PLAYERS[currentPlayer].symbol, row, column)) {
-        fillCell(calculateIndex(row, column));
-        if (!checkForWin()) {
-          currentPlayer = ++currentPlayer % 2;
-          toggleElements([...elem.arrElementsX, ...elem.arrElementsO]);
-        } else return
-      };
-    }
+  function clearWin(){
+    winLine.setAttribute('opacity','0');
+    winLine.setAttribute('x1','0'); winLine.setAttribute('y1','0');
+    winLine.setAttribute('x2','0'); winLine.setAttribute('y2','0');
   }
 
-  /* -------------------------------- Handlers -------------------------------- */
-
-  const handleInput = () => {
-    const enabled = Boolean(elem.inputName.value.trim());
-    elem.buttonAccept.classList.toggle('switched-on', enabled);
-    elem.buttonAccept.disabled = !enabled;
-  }
-
-  const restartGame = () => {
-    elem.buttonRestart.disabled = true;
-    elem.buttonAgain.disabled = true;
-    if (!elem.displayEnd.classList.contains('switched-on')) showHideElements([], [elem.displayEnd]);
-    board = createBoard();
-    initGame();
-  }
-
-  const playAgain = () => {
-
-    unfillCell('class')
-    board = createBoard();
-    currentPlayer = 0;
-
-    switchElements(
-      [...elem.arrElementsX, elem.displayName],
-      [...elem.arrElementsO, ...elem.arrCells, elem.buttonAgain, elem.displayEnd]
-    );
-    elem.buttonAgain.disabled = true;
-
-    setTimeout(() => {
-      unfillCell('text');
-      board.isBlocked = false;
-      switchElements(elem.arrCells, []);
-    }, 600);
-  }
-
-  const handleCell = event => {
-
-    const index = Number(event.target.dataset.index)
-    const row = Math.floor(index / 3);
-    const col = index % 3;
-
-    play(row, col);
-  }
-
-  /* --------------------------------- Events --------------------------------- */
-
-  elem.inputName.addEventListener('input', handleInput);
-  elem.buttonRestart.addEventListener('click', restartGame);
-  elem.buttonAgain.addEventListener('click', playAgain);
-  elem.arrCells.forEach(item => {
-    item.addEventListener('click', handleCell);
-  })
-
-  /* -------------------------------- Init game ------------------------------- */
-
-  document.addEventListener("DOMContentLoaded", () => {
-    initGame();
+  // events
+  resetEl.addEventListener('click', reset);
+  swapEl.addEventListener('click', ()=>{
+    first = (first==='X') ? 'O' : 'X';
+    reset();
+  });
+  modeEl.addEventListener('change', e=>{
+    vsCPU = e.target.checked;
+    reset();
   });
 
+  // init
+  renderBoard();
 })();
-
-  </script>
+</script>
 </body>
 </html>
