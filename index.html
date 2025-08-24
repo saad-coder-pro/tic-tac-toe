@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>GIF Icon Tic Tac Toe</title>
+<title>GIF Icon Tic Tac Toe — Compact + Smart CPU</title>
 <style>
   :root{
     --bg0:#0a0a0a;
@@ -16,11 +16,9 @@
     --muted:#cfcfcf;
 
     --win:#c6ffb3;
-    --draw:#f1d17a;
-
-    --radius:18px;
-    --shadow-1:0 12px 40px rgba(0,0,0,.55);
-    --shadow-2:0 6px 20px rgba(0,0,0,.45);
+    --radius:16px;
+    --shadow-1:0 10px 34px rgba(0,0,0,.55);
+    --shadow-2:0 6px 18px rgba(0,0,0,.45);
   }
 
   *{box-sizing:border-box}
@@ -28,48 +26,55 @@
   body{
     margin:0; color:var(--text);
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, Roboto, Arial;
+    /* fixed, no-repeat background */
     background:
-      radial-gradient(1200px 900px at -10% -20%, #1d1d1d 0%, transparent 55%),
-      radial-gradient(1000px 800px at 110% 10%, #1b1b1b 0%, transparent 55%),
-      linear-gradient(180deg, var(--bg2), var(--bg0));
-    display:grid; place-items:center; padding:28px;
+      radial-gradient(1000px 700px at -10% -20%, #1d1d1d 0%, transparent 55%) no-repeat fixed,
+      radial-gradient(900px 700px at 110% 10%, #1b1b1b 0%, transparent 55%) no-repeat fixed,
+      linear-gradient(180deg, var(--bg2), var(--bg0)) fixed;
+    background-attachment: fixed, fixed, fixed;
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    display:grid; place-items:center; padding:20px;
+    overflow: hidden; /* avoid scroll jitter on mobile */
   }
 
-  .app{ width:min(96vw,820px); display:flex; flex-direction:column; gap:18px; }
+  .app{
+    width:min(94vw,560px); /* smaller container */
+    display:flex; flex-direction:column; gap:12px;
+  }
 
   .title{
-    display:flex; align-items:center; gap:12px;
-    font-weight:900; letter-spacing:.4px;
-    font-size:clamp(22px,3.6vw,40px);
+    display:flex; align-items:center; gap:10px;
+    font-weight:900; letter-spacing:.3px;
+    font-size:clamp(18px,2.8vw,28px); /* smaller heading */
   }
   .spark{
-    width:30px;height:30px;border-radius:10px;
+    width:22px;height:22px;border-radius:8px;
     background: conic-gradient(from 120deg, #ffffff, #9aa0a6, #000000 70%, #ffffff);
-    box-shadow: 0 10px 30px rgba(255,255,255,.15);
-    animation: bob 3.4s ease-in-out infinite;
+    box-shadow: 0 8px 24px rgba(255,255,255,.15);
+    animation: bob 3.2s ease-in-out infinite;
   }
-  @keyframes bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  @keyframes bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
   .row{
-    display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
     background: linear-gradient(180deg, #141414, #0f0f0f);
     border-radius: var(--radius);
     border:1px solid var(--edge);
-    padding:12px 14px;
+    padding:10px 12px;
     box-shadow: var(--shadow-1), inset 0 1px 0 #ffffff14, inset 0 -1px 0 #00000080;
   }
 
-  .status{ font-weight:800; letter-spacing:.3px; }
+  .status{ font-weight:800; letter-spacing:.3px; font-size:14px }
   .badge{
-    margin-left:10px; padding:6px 12px; border-radius:999px;
-    font-size:12px; font-weight:900; color:#0d0f12;
-    background: linear-gradient(135deg, #f5f5f5, #bfbfbf);
+    margin-left:8px; padding:5px 10px; border-radius:999px;
+    font-size:11px; font-weight:900; color:#0d0f12;
+    background: linear-gradient(135deg, #f5f5f5, #cfcfcf);
     box-shadow: 0 6px 16px rgba(255,255,255,.22);
   }
 
-  .toggle{ display:flex; align-items:center; gap:10px; }
+  .toggle{ display:flex; align-items:center; gap:8px; }
   .switch{
-    appearance:none; width:60px; height:32px; border-radius:999px;
+    appearance:none; width:54px; height:28px; border-radius:999px;
     background: linear-gradient(180deg,#1b1b1b,#0f0f0f);
     border:1px solid var(--edge-strong);
     position:relative; cursor:pointer;
@@ -78,108 +83,105 @@
   }
   .switch::after{
     content:""; position:absolute; top:50%; left:6px; transform:translateY(-50%);
-    width:22px; height:22px; border-radius:50%;
+    width:18px; height:18px; border-radius:50%;
     background: linear-gradient(180deg,#fff,#cfcfcf);
-    box-shadow: 0 4px 14px rgba(255,255,255,.35);
+    box-shadow: 0 4px 12px rgba(255,255,255,.35);
     transition:left .25s ease;
   }
   .switch:checked{ background: linear-gradient(180deg,#232323,#101010); border-color:#ffffff33; }
-  .switch:checked::after{ left:32px; }
+  .switch:checked::after{ left:30px; }
 
   .board-card{
     background: linear-gradient(180deg, #151515, #0c0c0c);
     border-radius: calc(var(--radius) + 2px);
     border:1px solid var(--edge-strong);
-    padding:18px;
+    padding:12px; /* tighter padding */
     box-shadow: var(--shadow-1);
   }
 
   .board{
-    width:100%; aspect-ratio:1;
-    display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;
+    width:100%;
+    aspect-ratio:1;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:10px; /* smaller gap for compact card */
   }
 
   .cell{
-    position:relative; overflow:hidden; border-radius:16px;
+    position:relative; overflow:hidden; border-radius:14px;
     background:
-      radial-gradient(180px 160px at 30% 20%, #1f1f1f 0%, transparent 60%),
+      radial-gradient(150px 120px at 30% 20%, #1f1f1f 0%, transparent 60%),
       linear-gradient(180deg, #121212, #0a0a0a);
     border:1px solid #ffffff12;
     display:grid; place-items:center;
     cursor:pointer;
     transition: transform .14s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
     box-shadow: var(--shadow-2);
-  }
-  .cell::before{
-    content:""; position:absolute; inset:0; pointer-events:none;
-    background: linear-gradient(135deg, #ffffff0d, #00000000 40%, #ffffff14 75%);
-    mix-blend-mode: screen;
+    min-height: 0; /* ensure proper scaling on small screens */
   }
   .cell:hover{
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     border-color:#ffffff2b;
-    box-shadow: 0 10px 24px rgba(255,255,255,.08);
+    box-shadow: 0 8px 18px rgba(255,255,255,.08);
   }
   .cell:active{ transform: translateY(0) }
-  .cell.disabled{ cursor:not-allowed; opacity:.9 }
+  .cell.disabled{ cursor:not-allowed; opacity:.93 }
 
   /* GIF icon container */
   .gif-icon{
-    width: 68%;
+    width: 64%;
     aspect-ratio: 1;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    /* subtle appear effect */
     transform: scale(.96);
     opacity: 0;
-    animation: pop .28s ease forwards;
-    filter: drop-shadow(0 6px 18px rgba(255,255,255,.18));
+    animation: pop .24s ease forwards;
+    filter: drop-shadow(0 6px 16px rgba(255,255,255,.17));
   }
-  @keyframes pop{
-    to{ transform: scale(1); opacity:1 }
-  }
+  @keyframes pop{ to{ transform: scale(1); opacity:1 } }
 
-  /* shimmer pass */
+  /* subtle shine sweep */
   .shine{
     position:absolute; inset:0; pointer-events:none; opacity:0;
     background: linear-gradient(130deg, #ffffff00 20%, #ffffff18 50%, #ffffff00 80%);
     transform: translateX(-120%);
     filter: blur(0.4px);
   }
-  .cell.placed .shine{ opacity:1; animation: sweep .65s ease forwards; }
+  .cell.placed .shine{ opacity:1; animation: sweep .6s ease forwards; }
   @keyframes sweep{ to { transform: translateX(120%); opacity:.0 } }
 
   /* winning overlay line */
   .overlay{ position:relative; }
   .win-svg{
-    position:absolute; inset:18px;
+    position:absolute; inset:12px; /* matches board-card padding */
     pointer-events:none;
   }
   .win-svg line{
     stroke: var(--win);
-    stroke-width: 12;
+    stroke-width: 10;
     stroke-linecap: round;
     stroke-dasharray: 0 1000;
-    animation: win-line .64s cubic-bezier(.16,.84,.2,1) forwards;
-    filter: drop-shadow(0 10px 24px rgba(198,255,179,.35));
+    animation: win-line .56s cubic-bezier(.16,.84,.2,1) forwards;
+    filter: drop-shadow(0 10px 20px rgba(198,255,179,.32));
   }
   @keyframes win-line{ to { stroke-dasharray: 1000 0 } }
 
-  .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+  .controls{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
   .btn{
     appearance:none; border:none; cursor:pointer; font-weight:900; letter-spacing:.3px;
-    padding:12px 16px; border-radius:14px; color:#0b0d10;
+    padding:10px 12px; border-radius:12px; color:#0b0d10;
     background: linear-gradient(135deg,#ffffff,#cfcfcf);
-    box-shadow: 0 8px 22px rgba(255,255,255,.22);
+    box-shadow: 0 6px 18px rgba(255,255,255,.22);
     transition: transform .12s ease, box-shadow .2s ease;
+    font-size:14px;
   }
   .btn:hover{ transform: translateY(-1px) }
   .btn:active{ transform: translateY(0) }
   .btn.alt{
     color:#0b0d10;
     background: linear-gradient(135deg,#c1ffd8,#e8fff3);
-    box-shadow: 0 8px 22px rgba(193,255,216,.22);
+    box-shadow: 0 6px 18px rgba(193,255,216,.22);
   }
 
   .subtle{ color:var(--muted); font-size:12px; opacity:.9 }
@@ -189,7 +191,7 @@
   <div class="app">
     <div class="title">
       <div class="spark"></div>
-      BW Gradient Tic Tac Toe (GIF Icons)
+      Compact GIF Tic Tac Toe (Smart CPU)
     </div>
 
     <div class="row controls">
@@ -197,11 +199,11 @@
         <input id="mode" class="switch" type="checkbox"/>
         <div>
           <div style="font-weight:800">VS Computer</div>
-          <div class="subtle">Toggle single‑player</div>
+          <div class="subtle">Toggle single‑player (minimax)</div>
         </div>
       </div>
       <div class="status">Turn: <span id="turn">X</span><span class="badge" id="badge">Playing</span></div>
-      <div style="display:flex; gap:10px">
+      <div style="display:flex; gap:8px">
         <button id="reset" class="btn">Restart</button>
         <button id="swap" class="btn alt">Swap First</button>
       </div>
@@ -215,7 +217,7 @@
     </div>
 
     <div class="row" style="justify-content:center">
-      <div class="subtle">Place x.gif and o.gif beside this file. Transparent backgrounds look best.</div>
+      <div class="subtle">Place x.gif and o.gif beside this file. Background is fixed and non‑repeating.</div>
     </div>
   </div>
 
@@ -274,7 +276,7 @@
     move(i, turn);
 
     if(vsCPU && playing && turn !== first){
-      setTimeout(cpuTurn, 360);
+      setTimeout(cpuTurn, 260); // snappier on compact UI
     }
   }
 
@@ -318,7 +320,7 @@
     turn = (turn==='X') ? 'O' : 'X';
     turnEl.textContent = turn;
     badgeEl.textContent = 'Playing';
-    badgeEl.style.background = 'linear-gradient(135deg, #f5f5f5, #bfbfbf)';
+    badgeEl.style.background = 'linear-gradient(135deg, #f5f5f5, #cfcfcf)';
   }
 
   function disableAll(){
@@ -338,52 +340,81 @@
     turn = first;
     turnEl.textContent = turn;
     badgeEl.textContent = 'Playing';
-    badgeEl.style.background = 'linear-gradient(135deg, #f5f5f5, #bfbfbf)';
+    badgeEl.style.background = 'linear-gradient(135deg, #f5f5f5, #cfcfcf)';
     clearWin();
     renderBoard();
 
     if(vsCPU && turn !== human()){
-      setTimeout(cpuTurn, 300);
+      setTimeout(cpuTurn, 220);
     }
   }
 
   function human(){ return first; }
 
-  // Simple tactical CPU (win/block/center/corners/sides)
+  // Minimax with alpha-beta pruning for optimal CPU
   function cpuTurn(){
     if(!playing) return;
     const ai = (first==='X') ? 'O' : 'X';
     const humanP = first;
 
-    const w = findWinning(cells, ai);
-    if(w != null){ move(w, ai); return; }
-
-    const b = findWinning(cells, humanP);
-    if(b != null){ move(b, ai); return; }
-
-    if(!cells[4]){ move(4, ai); return; }
-
-    const corners = [0,2,6,8].filter(i=>!cells[i]);
-    if(corners.length){ move(random(corners), ai); return; }
-
-    const sides = [1,3,5,7].filter(i=>!cells[i]);
-    if(sides.length){ move(random(sides), ai); return; }
+    const best = bestMove(cells, ai, humanP);
+    if(best.index != null){
+      move(best.index, ai);
+    }
   }
 
-  function findWinning(board, who){
-    for(const [a,b,c] of WINS){
-      const trio=[board[a],board[b],board[c]];
-      const count = trio.filter(v=>v===who).length;
-      const empty = trio.findIndex(v=>!v);
-      if(count===2 && empty>-1){
-        const idx=[a,b,c][empty];
-        if(!board[idx]) return idx;
+  function bestMove(board, ai, humanP){
+    let best = {score: -Infinity, index: null};
+    for(const i of emptySquares(board)){
+      board[i] = ai;
+      const score = minimax(board, 0, false, ai, humanP, -Infinity, Infinity);
+      board[i] = null;
+      if(score > best.score){
+        best = {score, index:i};
       }
     }
-    return null;
+    return best;
   }
 
-  function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function minimax(board, depth, isMax, ai, humanP, alpha, beta){
+    const res = winner(board);
+    if(res){
+      if(res.p === ai)   return 10 - depth;
+      if(res.p === humanP) return depth - 10;
+    }
+    if(isFull(board)) return 0;
+
+    if(isMax){
+      let maxEval = -Infinity;
+      for(const i of emptySquares(board)){
+        board[i] = ai;
+        const evalScore = minimax(board, depth+1, false, ai, humanP, alpha, beta);
+        board[i] = null;
+        maxEval = Math.max(maxEval, evalScore);
+        alpha = Math.max(alpha, evalScore);
+        if(beta <= alpha) break;
+      }
+      return maxEval;
+    }else{
+      let minEval = Infinity;
+      for(const i of emptySquares(board)){
+        board[i] = humanP;
+        const evalScore = minimax(board, depth+1, true, ai, humanP, alpha, beta);
+        board[i] = null;
+        minEval = Math.min(minEval, evalScore);
+        beta = Math.min(beta, evalScore);
+        if(beta <= alpha) break;
+      }
+      return minEval;
+    }
+  }
+
+  function emptySquares(board){
+    const arr=[];
+    for(let i=0;i<9;i++) if(!board[i]) arr.push(i);
+    return arr;
+  }
+  function isFull(board){ return board.every(Boolean); }
 
   function drawWin(lineIdxs){
     const map = (i)=>{
@@ -399,7 +430,6 @@
     winLine.setAttribute('x2', x2);
     winLine.setAttribute('y2', y2);
     winLine.setAttribute('opacity','1');
-    // retrigger css animation
     winLine.style.animation='none'; void winLine.offsetWidth; winLine.style.animation=null;
   }
 
