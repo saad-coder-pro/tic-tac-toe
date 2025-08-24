@@ -6,8 +6,8 @@ const ASSETS = [
 
   // Images
   "./B.png",
-  "./x.gif",
-  "./o.gif",
+  "./x.png",
+  "./o.png",
   ];
 
 
