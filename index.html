@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>GIF Icon Tic Tac Toe — Compact + Smart CPU</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#FFD700">
+<title>Tic Tac Toe</title>
 <style>
   :root{
     --bg0:#0a0a0a;
@@ -186,12 +188,18 @@
 
   .subtle{ color:var(--muted); font-size:12px; opacity:.9 }
 </style>
+  <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log('Service Worker Registered'));
+}
+  </script>
 </head>
 <body>
   <div class="app">
     <div class="title">
       <div class="spark"></div>
-      Compact GIF Tic Tac Toe (Smart CPU)
+      Tic Tac Toe
     </div>
 
     <div class="row controls">
@@ -217,7 +225,7 @@
     </div>
 
     <div class="row" style="justify-content:center">
-      <div class="subtle">Place x.gif and o.gif beside this file. Background is fixed and non‑repeating.</div>
+      <div class="subtle">made by saad.</div>
     </div>
   </div>
 
@@ -265,7 +273,7 @@
   function setGif(el, who){
     const icon = document.createElement('div');
     icon.className = 'gif-icon';
-    icon.style.backgroundImage = who === 'X' ? 'url("./x.gif")' : 'url("./o.gif")';
+    icon.style.backgroundImage = who === 'X' ? 'url("./x.png")' : 'url("./o.png")';
     el.appendChild(icon);
     el.classList.add('placed');
   }
